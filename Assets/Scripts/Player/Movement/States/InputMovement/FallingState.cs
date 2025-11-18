@@ -33,7 +33,7 @@ public class FallingState : InputMoveState
     {
         base.OnEnter();
 
-        stateMachine.PlayerAnimator.CrossFade("Falling", 0.25f);
+        stateMachine.PlayerAnimator.CrossFade("Falling", 0.05f);
         stateMachine.PlayerAnimator.SetBool(IsFalling, true);
     }
 
