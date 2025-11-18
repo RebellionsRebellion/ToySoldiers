@@ -12,13 +12,15 @@ public class StateMachine : MonoBehaviour
         currentState?.Tick();
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         currentState?.FixedTick();
     }
 
     public bool SwitchState(State newState, State oldState)
     {
+        // Debug.Log("Switch to " + newState.GetType().Name);
+        
         if (!newState.CanEnter())
             return false;
         
@@ -26,6 +28,7 @@ public class StateMachine : MonoBehaviour
         // Avoid switching states multiple times in one frame
         if (oldState != null)
         {
+            
             if (oldState.HasChangedState)
                 return false;
             oldState.HasChangedState = true;

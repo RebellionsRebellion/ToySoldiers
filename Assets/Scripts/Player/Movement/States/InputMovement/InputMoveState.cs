@@ -115,14 +115,16 @@ public abstract class InputMoveState : MovementState
             SwitchState(stateMachine.ClimbingState);
         }
 
-        if (CanJump && stateMachine.InputController.IsJumping)
+        if (CanJump && stateMachine.IsGrounded && stateMachine.InputController.IsJumping)
         {
             // Set jumping state multiplier to current speed multiplier
             stateMachine.JumpingState.SetSpeedMultiplier(GetSpeedMultiplier);
             SwitchState(stateMachine.JumpingState);
         }
 
-        if(!stateMachine.IsGrounded && stateMachine.CurrentVelocity.y < stateMachine.FallingState.Settings.FallingVelocityThreshold)
+        // Start falling if midair with sufficient downward velocity
+        // Ignore if state is fallingstate
+        if(!stateMachine.IsGrounded && stateMachine.CurrentVelocity.y < stateMachine.FallingState.Settings.FallingVelocityThreshold && this is not FallingState)
         {
             SwitchState(stateMachine.FallingState);
         }

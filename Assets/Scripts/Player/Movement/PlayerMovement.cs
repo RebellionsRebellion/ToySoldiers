@@ -52,6 +52,8 @@ public class PlayerMovement : StateMachine
     public JumpingSettings JumpingSettings => jumpingSettings;
     [SerializeField] private FallingSettings fallingSettings = new FallingSettings();
     public FallingSettings FallingSettings => fallingSettings;
+    [SerializeField] private ParachutingSettings parachutingSettings = new ParachutingSettings();
+    public ParachutingSettings ParachutingSettings => parachutingSettings;
     
     private WalkingState walkingState; 
     public WalkingState WalkingState => walkingState;
@@ -130,6 +132,7 @@ public class PlayerMovement : StateMachine
         parachuteState = new ParachuteState(this);
         parachuteState.Initialize();
         
+        
         SwitchState(walkingState, null);
     }
 
@@ -137,9 +140,32 @@ public class PlayerMovement : StateMachine
     {
         base.Update();
         
-        if(canRotatePlayer)
-            FrameLook();
+        if (!(currentState is IMovementState { UseRigidbody: true }))
+        {
+            // Rotating player when no rigidbody
+            if(canRotatePlayer)
+                FrameLook();
+            
+            // Only apply velocity if currently not using rigidbody
+            ApplyVelocity();
+        }
+    }
+
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
         
+        if (currentState is IMovementState { UseRigidbody: true })
+        {
+            // Rotating player when using rigidbody
+            if(canRotatePlayer)
+                FrameLook();
+        }
+    }
+
+
+    private void ApplyVelocity()
+    {
         // Apply gravity
         if (currentState is IMovementState { UseGravity: true })
         {
@@ -158,14 +184,11 @@ public class PlayerMovement : StateMachine
     }
 
     
-    private Vector3 animDeltaPosition;
-    private Vector3 animVelocity;
     private void OnAnimatorMove()
     {
         if (playerAnimator.applyRootMotion)
         {
-            animDeltaPosition = playerAnimator.deltaPosition;
-            animVelocity = animDeltaPosition / Time.deltaTime;
+            Vector3 animDeltaPosition = playerAnimator.deltaPosition;
             cc.Move(animDeltaPosition);
         }
     }
@@ -205,10 +228,14 @@ public class PlayerMovement : StateMachine
         ChangeHeight(defaultColliderHeight);
     }
 
+    private RigidbodyInterpolation originalRigidbodyInterpolation;
     public void ToggleRigidbody(bool value)
     {
         cc.enabled = !value;
         rb.isKinematic = !value;
+        if(rb.interpolation != RigidbodyInterpolation.None)
+            originalRigidbodyInterpolation = rb.interpolation;
+        rb.interpolation = value ? originalRigidbodyInterpolation : RigidbodyInterpolation.None;
         col.enabled = value;
     }
 
@@ -252,7 +279,7 @@ public class PlayerMovement : StateMachine
     {
         float sphereRadius = cc.radius;
         Vector3 sphereOrigin = transform.position + Vector3.up * (sphereRadius);
-        float rayLength = 0.25f;
+        float rayLength = 0.15f;
         
         RaycastHit hitInfo;
         return Physics.SphereCast(sphereOrigin, sphereRadius, Vector3.down, out hitInfo, rayLength, environmentLayer);

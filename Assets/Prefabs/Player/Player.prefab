@@ -104,7 +104,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3865514910779464842}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.38268209, z: -0, w: 0.92388016}
+  m_LocalRotation: {x: 0, y: -0.38268343, z: 0, w: 0.92387956}
   m_LocalPosition: {x: 16.079489, y: 4.81, z: -0.19963026}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -246,7 +246,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     climbStaminaUI: {fileID: 2851908640134735326}
     climbStaminaBar: {fileID: 1715344140462843341}
-    maxClimbStamina: 7
+    maxClimbStamina: 10
     climbStaminaDrainRate: 1
     climbStaminaRegenRate: 2
     climbStaminaFadeDuration: 0.5
@@ -286,8 +286,14 @@ MonoBehaviour:
     jumpLandDelay: 0.5
     rejumpDelay: 0.2
   fallingSettings:
-    fallingHorizontalSpeedMultiplier: 0.33
+    fallingHorizontalSpeedMultiplier: 0.66
     fallingVelocityThreshold: -3
+  parachutingSettings:
+    parachutingMaxSpeed: 10
+    parachutingAcceleration: 15
+    parachutingTurnSpeed: 500
+    parachutingGravity: -15
+    parachutingStartBoost: 5
   lookSensitivity: 1
 --- !u!143 &3582895354611659422
 CharacterController:
@@ -345,7 +351,7 @@ Rigidbody:
   m_GameObject: {fileID: 3865514910779464842}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 1
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -358,11 +364,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_Interpolate: 2
+  m_Constraints: 112
+  m_CollisionDetection: 1
 --- !u!136 &4366988225684868681
 CapsuleCollider:
   m_ObjectHideFlags: 0

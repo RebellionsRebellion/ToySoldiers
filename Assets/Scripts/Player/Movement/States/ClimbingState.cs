@@ -84,6 +84,7 @@ public class ClimbingState : MovementState
     }
 
     public override bool UseGravity => false;
+    public override bool UseRootMotion => true;
 
     private Tween delayTween;
     private Tween hangToVaultDelay;
@@ -113,7 +114,6 @@ public class ClimbingState : MovementState
         this.stateMachine.ToggleCameraXOrbit(true);
         
         stateMachine.PlayerAnimator.SetBool(IsClimbing, true);
-        stateMachine.PlayerAnimator.applyRootMotion = true;
         
         currentStamina = Settings.MaxClimbStamina;
         
