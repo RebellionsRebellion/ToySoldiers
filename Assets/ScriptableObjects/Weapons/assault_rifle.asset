@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a1aaded003aadb42a84bfb74b5e87cf, type: 3}
+  m_Name: assault_rifle
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSO
+  ClassName: assault_rifle
+  DisplayName: Assault Rifle
+  FireRateRPM: 100
+  Damage: 10
+  FireModes:
+  - Full
+  - Semi
+  MagSize: 30
+  SpecialAmmo: 0
+  ReloadTime: 3.2
+  BaseSpread: 0
+  HalfSpread: 1.5
+  MaxSpread: 3
+  ShotQuantity: 1
+  ShotSpread: 0
+  IsPhysicsBased: 0
+  WeaponPrefab: {fileID: 0}
+  CurrentAmmoInMag: 0
+  CurrentFireMode: 
+  FirePoint: {fileID: 0}
