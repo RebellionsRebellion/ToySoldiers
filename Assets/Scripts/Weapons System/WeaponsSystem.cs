@@ -11,6 +11,7 @@ public class WeaponsSystem : MonoBehaviour
     [Tooltip("Player camera used for the obstruction check")]
     [SerializeField] private Camera playerCamera;   // player camera used for the obstruction check
     [Tooltip("Test cube to visualise spread")]
+    [SerializeField] private transform firePoint;
     public Transform cube;                          // test cube to visualise spread
 
 
@@ -214,11 +215,15 @@ public class WeaponsSystem : MonoBehaviour
             // fire ray from gun
             // if hit collider that has tag shootable
             // call take damage on it somhow
+
+            // TODO: Jasper just shoot an infinite length ray here and dont worry about the physics shoot yet, make it damage the health system when you have that in from ollie. Shoot from firePoint
         }
         else
         {
             // shoot from camera
             // same as the other one
+
+            // TODO: Jasper just shoot an infinite length ray here and dont worry about the physics shoot yet, make it damage the health system when you have that in from ollie. Shoot from firePoint
         }
     }
 
