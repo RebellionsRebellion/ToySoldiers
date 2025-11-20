@@ -78,7 +78,8 @@ public class WeaponsSystem : MonoBehaviour
     private void Update()
     {
         currentWeaponInstance.weaponSpread.UpdateSpreadOverTime();
-        cube.localScale = new Vector3(currentWeaponInstance.weaponSpread.CurrentSpreadAmount, 1f, 1f);
+        if(cube)
+            cube.localScale = new Vector3(currentWeaponInstance.weaponSpread.CurrentSpreadAmount, 1f, 1f);
     }
 
     // called when for example the player clicks, or called every frame if holding down for full auto

@@ -2685,6 +2685,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae66b20a1ce52d74cad0b4dc370be5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &1697466546 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1921497214102641122, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
+  m_PrefabInstance: {fileID: 3466539430653220263}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1739945520
 GameObject:
   m_ObjectHideFlags: 0
@@ -3358,6 +3363,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7571786518036270854, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
+      propertyPath: firePoint
+      value: 
+      objectReference: {fileID: 1697466546}
+    - target: {fileID: 7571786518036270854, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
+      propertyPath: playerCamera
+      value: 
+      objectReference: {fileID: 330585545}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
