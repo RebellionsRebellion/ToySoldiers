@@ -4,9 +4,9 @@ using UnityEditor;
 
 public class DataLoader
 {
-    public static List<WeaponSO> LoadWeaponsCSV()
+    public static List<WeaponDataSO> LoadWeaponsCSV()
     {
-        List<WeaponSO> weapons = new List<WeaponSO>();
+        List<WeaponDataSO> weapons = new List<WeaponDataSO>();
         List<string[]> rows = CSVParser.LoadFromCSV("weapons");
 
         if(rows != null && rows.Count <= 1)
@@ -23,30 +23,30 @@ public class DataLoader
             var columns = rows[i];
 
             // create a new ScriptableObject instance
-            WeaponSO weapon = ScriptableObject.CreateInstance<WeaponSO>();
+            WeaponDataSO weaponData = ScriptableObject.CreateInstance<WeaponDataSO>();
 
             // assign values from CSV
-            weapon.ClassName = columns[0];
-            weapon.DisplayName = columns[1];
-            weapon.FireRateRPM = int.Parse(columns[2]);
-            weapon.Damage = int.Parse(columns[3]);
-            weapon.FireModes = columns[4].Split(' '); // i do this as just space seperated strings
-            weapon.MagSize = int.Parse(columns[5]);
-            weapon.SpecialAmmo = bool.Parse(columns[6]);
-            weapon.ReloadTime = float.Parse(columns[7]);
-            weapon.BaseSpread = float.Parse(columns[8]);
-            weapon.HalfSpread = float.Parse(columns[9]);
-            weapon.MaxSpread = float.Parse(columns[10]);
-            weapon.ShotQuantity = int.Parse(columns[11]);
-            weapon.ShotSpread = float.Parse(columns[12]);
-            weapon.IsPhysicsBased = bool.Parse(columns[13]);
+            weaponData.ClassName = columns[0];
+            weaponData.DisplayName = columns[1];
+            weaponData.FireRateRPM = int.Parse(columns[2]);
+            weaponData.Damage = int.Parse(columns[3]);
+            weaponData.FireModes = columns[4].Split(' '); // i do this as just space seperated strings
+            weaponData.MagSize = int.Parse(columns[5]);
+            weaponData.SpecialAmmo = bool.Parse(columns[6]);
+            weaponData.ReloadTime = float.Parse(columns[7]);
+            weaponData.BaseSpread = float.Parse(columns[8]);
+            weaponData.HalfSpread = float.Parse(columns[9]);
+            weaponData.MaxSpread = float.Parse(columns[10]);
+            weaponData.ShotQuantity = int.Parse(columns[11]);
+            weaponData.ShotSpread = float.Parse(columns[12]);
+            weaponData.IsPhysicsBased = bool.Parse(columns[13]);
 
             // save as an asset in the project so it can be referenced
-            string assetPath = $"Assets/ScriptableObjects/Weapons/{weapon.ClassName}.asset";
-            AssetDatabase.CreateAsset(weapon, assetPath);
+            string assetPath = $"Assets/ScriptableObjects/Weapons/{weaponData.ClassName}.asset";
+            AssetDatabase.CreateAsset(weaponData, assetPath);
             AssetDatabase.SaveAssets();
 
-            weapons.Add(weapon);
+            weapons.Add(weaponData);
         }
 
         return weapons;

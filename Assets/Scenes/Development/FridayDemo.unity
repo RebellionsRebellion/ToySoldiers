@@ -2025,6 +2025,51 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 544508514229558239, guid: d941f8c25071b75408f4976baeb63121, type: 3}
   m_PrefabInstance: {fileID: 1298398210}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1165395816
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1165395818}
+  - component: {fileID: 1165395817}
+  m_Layer: 0
+  m_Name: ScriptableObjectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1165395817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1165395816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d45161543261b244f995deeb4e4b469c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObjectManager
+  managedScriptableObjects: []
+--- !u!4 &1165395818
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1165395816}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1195124695 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3c44c34dd2fc9d145b8d27baf9fcb007, type: 3}
@@ -2685,11 +2730,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae66b20a1ce52d74cad0b4dc370be5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &1697466546 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1921497214102641122, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
-  m_PrefabInstance: {fileID: 3466539430653220263}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1739945520
 GameObject:
   m_ObjectHideFlags: 0
@@ -3364,10 +3404,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7571786518036270854, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
-      propertyPath: firePoint
-      value: 
-      objectReference: {fileID: 1697466546}
-    - target: {fileID: 7571786518036270854, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 330585545}
@@ -3399,3 +3435,4 @@ SceneRoots:
   - {fileID: 1297555086}
   - {fileID: 540395409}
   - {fileID: 932489812}
+  - {fileID: 1165395818}

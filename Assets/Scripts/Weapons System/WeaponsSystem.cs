@@ -1,13 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 public class WeaponsSystem : MonoBehaviour
 {
+    [FormerlySerializedAs("inventory")]
     [Header("References")]
-    [Tooltip("The weapon ScriptableObject to use, will be set by inventory at later date")]
-    [SerializeField] private WeaponSO currentWeapon;
-    [Tooltip("Reference to the players ammo inventory to check for ammo when reloading")]
-    [SerializeField] private PlayerAmmoInventory playerAmmoInventory;
     [Tooltip("Reference to input logic")]
     [SerializeField] private PlayerInputController playerInputController;
     [Tooltip("Player camera used for the obstruction check")]
@@ -17,6 +15,9 @@ public class WeaponsSystem : MonoBehaviour
     public Transform cube;                          // test cube to visualise spread
 
 
+    private Weapon currentWeapon;
+    private PlayerInventory playerInventory => PlayerInventory.Instance;
+    
     // spread paramaters
     private float CurrentSpreadPosition = 0f;       // the position on the spread curve we are at
     private float currentSpreadAmount = 0f;         // the actual spread amount we are at based on the curve
@@ -29,71 +30,36 @@ public class WeaponsSystem : MonoBehaviour
     private float lastReloadTime = -999f;
     
     // weapon instances
-    private WeaponSO currentWeaponInstance;         // the instance of the scriptable object weapon we are using
-    private Dictionary<string, WeaponSO> initialisedWeapons = new Dictionary<string, WeaponSO>();   // the weapons we have already held (and initialised)
 
     private void Start()
     {
-        // initialise the currently held weapon
-        if(currentWeapon == null)
-            return;
 
-        if(initialisedWeapons.ContainsKey(currentWeapon.ClassName))
-        {
-            currentWeaponInstance = initialisedWeapons[currentWeapon.ClassName];
-        }
-        else
-        {
-            InitialiseWeapon();
-        }
+        currentWeapon = playerInventory.GetPrimaryWeapon();
         
         // Input events
-        playerInputController.OnShootAction += FireWeapon;
-        playerInputController.OnReloadAction += ReloadWeapon;
-    }
-
-    private void InitialiseWeapon()
-    {
-        currentWeaponInstance = ScriptableObject.CreateInstance<WeaponSO>();
-        currentWeaponInstance.CopyFrom(currentWeapon); // copy base data
-
-        // max out the ammo and set the fire mode
-        currentWeaponInstance.CurrentAmmoInMag = currentWeaponInstance.MagSize;
-
-        currentWeaponInstance.CurrentFireMode = currentWeaponInstance.FireModes[0];
-
-        // make its spread
-        currentWeaponInstance.weaponSpread = new WeaponSpread(
-            currentWeaponInstance.BaseSpread,
-            currentWeaponInstance.HalfSpread,
-            currentWeaponInstance.MaxSpread,
-            currentWeaponInstance.MagSize,
-            currentWeaponInstance.FireRateRPM
-        );
-
-        // add to dict
-        initialisedWeapons.Add(currentWeaponInstance.ClassName, currentWeaponInstance);
+        playerInputController.OnShootAction += Fire;
+        playerInputController.OnReloadAction += Reload;
     }
 
     private void Update()
     {
-        currentWeaponInstance.weaponSpread.UpdateSpreadOverTime();
+        currentWeapon.WeaponSpread.UpdateSpreadOverTime();
         if(cube)
-            cube.localScale = new Vector3(currentWeaponInstance.weaponSpread.CurrentSpreadAmount, 1f, 1f);
+            cube.localScale = new Vector3(currentWeapon.WeaponSpread.CurrentSpreadAmount, 1f, 1f);
     }
 
     // called when for example the player clicks, or called every frame if holding down for full auto
-    private void FireWeapon()
+    private void Fire()
     {
         // check we arent still reloading
-        if(Time.time - lastReloadTime < currentWeaponInstance.ReloadTime)
+        if(Time.time - lastReloadTime < currentWeapon.WeaponData.ReloadTime)
         {
             // am still reloading
             Debug.Log("Still reloading!");
             return;
         }
 
-        if(currentWeaponInstance.CurrentAmmoInMag <= 0)
+        if(currentWeapon.CurrentAmmoInMag <= 0)
         {
             // play empty mag sound here
             Debug.Log("No ammo in mag!");
@@ -101,17 +67,17 @@ public class WeaponsSystem : MonoBehaviour
         }
 
         // limit it so you can only shoot up to the max fire rate
-        float timeBetweenShots = 60f / currentWeaponInstance.FireRateRPM;
+        float timeBetweenShots = 60f / currentWeapon.WeaponData.FireRateRPM;
         if(Time.time - lastShotTime < timeBetweenShots)
         {
             Debug.Log("Shooting too fast!");
             return;
         }
 
-        Debug.Log("Firing weapon: " + currentWeaponInstance.DisplayName);
+        Debug.Log("Firing weapon: " + currentWeapon.WeaponData.DisplayName);
 
         // do the actual shooting here
-        if(currentWeaponInstance.IsPhysicsBased)
+        if(currentWeapon.WeaponData.IsPhysicsBased)
         {
             DoPhysicsShoot();
         }
@@ -123,69 +89,16 @@ public class WeaponsSystem : MonoBehaviour
         // do the spread calculations
         lastShotTime = Time.time;
 
-        // update spread
-        currentWeaponInstance.weaponSpread.OnShotFired(currentWeaponInstance.MagSize);
-
-        currentWeaponInstance.CurrentAmmoInMag--;
+        
+        currentWeapon.Fire();
     }
 
-    public void ReloadWeapon()
+    public void Reload()
     {
-        // reset spread on reload
-        currentWeaponInstance.weaponSpread.ResetSpread();
         accumulatedShootingTime = 0f;
-
-        // determine which ammo to use
-        int availableAmmo;
-
-        if (currentWeaponInstance.SpecialAmmo)
-        {
-            availableAmmo = playerAmmoInventory.CurrentSpecialAmmo;
-        }
-        else
-        {
-            availableAmmo = playerAmmoInventory.CurrentNormalAmmo;
-        }
-
-        if (availableAmmo <= 0)
-        {
-            // no ammo left at all! play a sound or something
-            Debug.Log("No ammo left to reload!");
-            return;
-        }
-
-        // actually give/take the ammo
-        if (availableAmmo >= currentWeaponInstance.MagSize)
-        {
-            currentWeaponInstance.CurrentAmmoInMag = currentWeaponInstance.MagSize;
-
-            if (currentWeaponInstance.SpecialAmmo)
-            {
-                playerAmmoInventory.CurrentSpecialAmmo -= currentWeaponInstance.MagSize;
-            }
-            else
-            {
-                playerAmmoInventory.CurrentNormalAmmo -= currentWeaponInstance.MagSize;
-            }
-            Debug.Log("Reloaded full mag");
-        }
-        else
-        {
-            currentWeaponInstance.CurrentAmmoInMag = availableAmmo;
-
-            if (currentWeaponInstance.SpecialAmmo)
-            {
-                playerAmmoInventory.CurrentSpecialAmmo = 0;
-            }
-            else
-            {
-                playerAmmoInventory.CurrentNormalAmmo = 0;
-            }
-
-            Debug.Log("Reloaded partial mag");
-        }
-
         lastReloadTime = Time.time;
+
+        currentWeapon.Reload(playerInventory);
     }
 
     private bool IsGunObstructed()
@@ -199,7 +112,7 @@ public class WeaponsSystem : MonoBehaviour
         // also shoot a ray from the gun in the direction of where the camera ray landed
         if(Physics.Raycast(cameraRay, out cameraHit))
         {
-            if(Physics.Linecast(currentWeaponInstance.FirePoint.position, cameraHit.point))
+            if(currentWeapon.FirePoint && Physics.Linecast(currentWeapon.FirePoint.position, cameraHit.point))
             {
                 return true;
             }
