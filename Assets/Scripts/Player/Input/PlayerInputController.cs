@@ -11,6 +11,11 @@ public class PlayerInputController : MonoBehaviour
     public bool IsSprinting { get; private set; }
     public bool IsClimbing { get; private set; }
     public bool IsCrouching { get; private set; }
+    public bool IsAiming { get; private set; }
+    public bool IsShooting { get; private set; }
+    public Action OnShootAction;
+    public bool IsReloading { get; private set; }
+    public Action OnReloadAction;
     
     private void OnMove(InputValue inputValue)
     {
@@ -40,5 +45,26 @@ public class PlayerInputController : MonoBehaviour
     private void OnLook(InputValue inputValue)
     {
         FrameLook = inputValue.Get<Vector2>();
+    }
+    
+    private void OnAim(InputValue inputValue)
+    {
+        IsAiming = inputValue.isPressed;
+    }
+    
+    private void OnShoot(InputValue inputValue)
+    {
+        IsShooting = inputValue.isPressed;
+        
+        if(IsShooting && OnShootAction != null)
+            OnShootAction.Invoke();
+    }
+    
+    private void OnReload(InputValue inputValue)
+    {
+        IsReloading = inputValue.isPressed;
+        
+        if(IsReloading && OnReloadAction != null)
+            OnReloadAction.Invoke();
     }
 }

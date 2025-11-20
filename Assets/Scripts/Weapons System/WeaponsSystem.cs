@@ -8,10 +8,12 @@ public class WeaponsSystem : MonoBehaviour
     [SerializeField] private WeaponSO currentWeapon;
     [Tooltip("Reference to the players ammo inventory to check for ammo when reloading")]
     [SerializeField] private PlayerAmmoInventory playerAmmoInventory;
+    [Tooltip("Reference to input logic")]
+    [SerializeField] private PlayerInputController playerInputController;
     [Tooltip("Player camera used for the obstruction check")]
     [SerializeField] private Camera playerCamera;   // player camera used for the obstruction check
     [Tooltip("Test cube to visualise spread")]
-    [SerializeField] private transform firePoint;
+    [SerializeField] private Transform firePoint;
     public Transform cube;                          // test cube to visualise spread
 
 
@@ -44,6 +46,10 @@ public class WeaponsSystem : MonoBehaviour
         {
             InitialiseWeapon();
         }
+        
+        // Input events
+        playerInputController.OnShootAction += FireWeapon;
+        playerInputController.OnReloadAction += ReloadWeapon;
     }
 
     private void InitialiseWeapon()
