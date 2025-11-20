@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputController : MonoBehaviour
 {
+    [SerializeField] private InputActionAsset inputActions;
     
     public Vector2 FrameMove { get; private set; }
     public Vector2 FrameLook { get; private set; }
@@ -16,7 +17,21 @@ public class PlayerInputController : MonoBehaviour
     public Action OnShootAction;
     public bool IsReloading { get; private set; }
     public Action OnReloadAction;
+
+    private void Awake()
+    {
+        LoadInputActions();
+    }
     
+    private void LoadInputActions()
+    {
+        // Enable all action maps
+        foreach (var map in inputActions.actionMaps)
+        {
+            map.Enable();
+        }
+    }
+
     private void OnMove(InputValue inputValue)
     {
         FrameMove = inputValue.Get<Vector2>();
