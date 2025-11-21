@@ -1,22 +1,32 @@
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
 
 public class WeaponsSystem : MonoBehaviour
 {
-    [FormerlySerializedAs("inventory")]
     [Header("References")]
     [Tooltip("Reference to input logic")]
     [SerializeField] private PlayerInputController playerInputController;
     [Tooltip("Player camera used for the obstruction check")]
     [SerializeField] private Camera playerCamera;   // player camera used for the obstruction check
-    [Tooltip("Test cube to visualise spread")]
+    [FormerlySerializedAs("playerLayer")]
+    [Tooltip("Layer mask to stop the gun from shooting the player torso")]
+    [SerializeField] private LayerMask canShoot;
+    [Tooltip("The point that the gun actually shoots from, will be obtained dynamically in the future")]
     [SerializeField] private Transform firePoint;
+    
+    
+    [Tooltip("Test cube to visualise spread")]
     public Transform cube;                          // test cube to visualise spread
 
 
-    private Weapon currentWeapon;
+    [HideInInspector] public Weapon currentWeapon;
     private PlayerInventory playerInventory => PlayerInventory.Instance;
+    
+    // tracer
+    public GameObject tracerPrefab;   // assign in Inspector
+    public float tracerSpeed = 200f;  // only for moving tracers (optional)
     
     // spread paramaters
     private float CurrentSpreadPosition = 0f;       // the position on the spread curve we are at
@@ -75,7 +85,7 @@ public class WeaponsSystem : MonoBehaviour
         }
 
         Debug.Log("Firing weapon: " + currentWeapon.WeaponData.DisplayName);
-
+        
         // do the actual shooting here
         if(currentWeapon.WeaponData.IsPhysicsBased)
         {
@@ -83,7 +93,8 @@ public class WeaponsSystem : MonoBehaviour
         }
         else
         {
-            DoRaycastShoot();
+            Vector3 endPos = DoRaycastShoot();
+            SpawnTracer(firePoint.position, endPos);
         }
 
         // do the spread calculations
@@ -101,51 +112,25 @@ public class WeaponsSystem : MonoBehaviour
         currentWeapon.Reload(playerInventory);
     }
 
-    private bool IsGunObstructed()
+    private Vector3 DoRaycastShoot()
     {
-        Ray cameraRay;
-        RaycastHit cameraHit;
+        Ray cameraRay = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        // shoot a ray from the camera and see what its looking at
-        cameraRay = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        // debug lines
+        Debug.DrawRay(firePoint.position, cameraRay.direction * 100f, Color.red, 10f);
 
-        // also shoot a ray from the gun in the direction of where the camera ray landed
-        if(Physics.Raycast(cameraRay, out cameraHit))
+        // raycast from gun along shoot direction
+        RaycastHit hit;
+        if (Physics.Raycast(firePoint.position, cameraRay.direction, out hit, Mathf.Infinity, canShoot))
         {
-            if(currentWeapon.FirePoint && Physics.Linecast(currentWeapon.FirePoint.position, cameraHit.point))
-            {
-                return true;
-            }
-            else
-            {
-                // if that ray collides with anything else then the gun is obstructed so return true
-                return false;
-            }
+            if (hit.collider.CompareTag("Enemy"))
+                hit.collider.GetComponent<AIController>().TakeDamage(currentWeapon.WeaponData.Damage);
         }
-        return false;
+
+        return firePoint.position + cameraRay.direction * 100f; // 100 units forward
     }
 
-    private void DoRaycastShoot()
-    {
-        // do the actual racyast to fire the weapon (potentially we also need a physics based one for rpg etc)
 
-        if(IsGunObstructed())
-        {
-            // shoot from gun
-            // fire ray from gun
-            // if hit collider that has tag shootable
-            // call take damage on it somhow
-
-            // TODO: Jasper just shoot an infinite length ray here and dont worry about the physics shoot yet, make it damage the health system when you have that in from ollie. Shoot from firePoint
-        }
-        else
-        {
-            // shoot from camera
-            // same as the other one
-
-            // TODO: Jasper just shoot an infinite length ray here and dont worry about the physics shoot yet, make it damage the health system when you have that in from ollie. Shoot from firePoint
-        }
-    }
 
     private void DoPhysicsShoot()
     {
@@ -154,5 +139,26 @@ public class WeaponsSystem : MonoBehaviour
         // shoot ray from camera. Set initial direction of projectile to point at that
         
         // after that use the projectile physics i did for my ballistic system where visually it looks like its effected by gravity etc but its just all raycasts
+    }
+    
+    private void SpawnTracer(Vector3 start, Vector3 end)
+    {
+        GameObject tracer = Instantiate(tracerPrefab, start, Quaternion.identity);
+
+        Vector3 direction = (end - start).normalized;
+
+        // move the tracer with a coroutine
+        StartCoroutine(MoveTracer(tracer, direction, end));
+    }
+    
+    private IEnumerator MoveTracer(GameObject tracer, Vector3 dir, Vector3 end)
+    {
+        while (tracer && Vector3.Distance(tracer.transform.position, end) > 0.1f)
+        {
+            tracer.transform.position += dir * (tracerSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        Destroy(tracer);
     }
 }

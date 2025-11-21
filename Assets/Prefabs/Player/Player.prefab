@@ -359,8 +359,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponsSystem
   playerInputController: {fileID: 4134086573061151435}
   playerCamera: {fileID: 0}
+  canShoot:
+    serializedVersion: 2
+    m_Bits: 128
   firePoint: {fileID: 1921497214102641122}
   cube: {fileID: 0}
+  tracerPrefab: {fileID: 1779594140215910652, guid: f4d1a7441a64b8543bc8ae92e32c70f6, type: 3}
+  tracerSpeed: 200
 --- !u!1001 &5308149663071302956
 PrefabInstance:
   m_ObjectHideFlags: 0
