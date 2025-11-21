@@ -19,6 +19,7 @@ public class WeaponsSystem : MonoBehaviour
     
     [Tooltip("Test cube to visualise spread")]
     public Transform cube;                          // test cube to visualise spread
+    private Crosshair crosshair;                    // Crosshair 
 
 
     [HideInInspector] public Weapon currentWeapon;
@@ -43,6 +44,12 @@ public class WeaponsSystem : MonoBehaviour
 
     private void Start()
     {
+        // Find crosshair in scene
+        crosshair = FindFirstObjectByType<Crosshair>();
+        
+        // initialise the currently held weapon
+        if(currentWeapon == null)
+            return;
 
         currentWeapon = playerInventory.GetPrimaryWeapon();
         
@@ -53,9 +60,11 @@ public class WeaponsSystem : MonoBehaviour
 
     private void Update()
     {
-        currentWeapon.WeaponSpread.UpdateSpreadOverTime();
-        if(cube)
-            cube.localScale = new Vector3(currentWeapon.WeaponSpread.CurrentSpreadAmount, 1f, 1f);
+        currentWeaponInstance.weaponSpread.UpdateSpreadOverTime();
+        cube.localScale = new Vector3(currentWeaponInstance.weaponSpread.CurrentSpreadAmount, 1f, 1f);
+        
+        //UI Crosshair update
+        crosshair.UpdateSpread(currentWeaponInstance.weaponSpread.CurrentSpreadAmount);
     }
 
     // called when for example the player clicks, or called every frame if holding down for full auto
