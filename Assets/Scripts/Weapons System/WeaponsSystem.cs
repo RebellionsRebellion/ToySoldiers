@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
@@ -28,12 +29,6 @@ public class WeaponsSystem : MonoBehaviour
     // tracer
     public GameObject tracerPrefab;   // assign in Inspector
     public float tracerSpeed = 200f;  // only for moving tracers (optional)
-    
-    // spread paramaters
-    private float CurrentSpreadPosition = 0f;       // the position on the spread curve we are at
-    private float currentSpreadAmount = 0f;         // the actual spread amount we are at based on the curve
-    private float spreadInterval = 0f;              // amount to increase spread position by per shot
-    private AnimationCurve spreadCurve;
 
     // timing values
     private float lastShotTime = 0;                 // time in seconds since the start of the application when the last shot happened
@@ -42,29 +37,38 @@ public class WeaponsSystem : MonoBehaviour
     
     // weapon instances
 
+    private void OnEnable()
+    {
+//        playerInputController.OnShootAction += Fire;
+        playerInputController.OnReloadAction += Reload;
+    }
+
+    private void OnDisable()
+    {
+//        playerInputController.OnShootAction -= Fire;
+        playerInputController.OnReloadAction -= Reload;
+    }
+
     private void Start()
     {
         // Find crosshair in scene
         crosshair = FindFirstObjectByType<Crosshair>();
-        
-        // initialise the currently held weapon
-        if(currentWeapon == null)
-            return;
-
         currentWeapon = playerInventory.GetPrimaryWeapon();
-        
-        // Input events
-        playerInputController.OnShootAction += Fire;
-        playerInputController.OnReloadAction += Reload;
     }
 
     private void Update()
     {
-        currentWeaponInstance.weaponSpread.UpdateSpreadOverTime();
-        cube.localScale = new Vector3(currentWeaponInstance.weaponSpread.CurrentSpreadAmount, 1f, 1f);
+        // TODO: use events this is temp due to it not working for unknown reason
+        if (playerInputController.IsShooting)
+        {
+            Fire();
+        }
+        
+        currentWeapon.WeaponSpread.UpdateSpreadOverTime();
         
         //UI Crosshair update
-        crosshair.UpdateSpread(currentWeaponInstance.weaponSpread.CurrentSpreadAmount);
+        crosshair.UpdateSpread(currentWeapon.WeaponSpread.CurrentSpreadAmount);
+        
     }
 
     // called when for example the player clicks, or called every frame if holding down for full auto
