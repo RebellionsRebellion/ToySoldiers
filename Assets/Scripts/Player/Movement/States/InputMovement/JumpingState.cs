@@ -31,8 +31,10 @@ public class JumpingState : InputMoveState
     private Tween landDelayTween;
     private Tween rejumpDelayTween;
 
-    public override void Initialize()
+    protected override void SetEnterConditions()
     {
+        base.SetEnterConditions();
+        AddCanEnterCondition(() => !rejumpDelayTween.isAlive);
     }
 
     public override void OnEnter()
@@ -55,11 +57,6 @@ public class JumpingState : InputMoveState
         rejumpDelayTween = Tween.Delay(Settings.RejumpDelay);
        
     }
-
-    public override bool CanEnter()
-    {
-        return !rejumpDelayTween.isAlive;
-    }
     
     public override void Tick()
     {
@@ -72,6 +69,10 @@ public class JumpingState : InputMoveState
 
         if (stateMachine.IsGrounded && !landDelayTween.isAlive)
             SwitchState(stateMachine.WalkingState);
+        
+        // Parachute if far enough from ground
+        if (stateMachine.InputController.JumpDown)
+            SwitchState(stateMachine.ParachuteState);
     }
 
     public override float GetSpeedMultiplier => speedMultiplier;

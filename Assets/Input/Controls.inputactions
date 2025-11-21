@@ -43,15 +43,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Climb",
-                    "type": "Value",
-                    "id": "b85da9ff-84c7-40db-8555-9089e877d4f6",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Crouch",
                     "type": "Value",
                     "id": "23cbb266-2ff5-4f19-82c5-f5ab0f515e20",
@@ -174,28 +165,6 @@
                 },
                 {
                     "name": "",
-                    "id": "5438a616-ae5a-4cc2-94b5-18cf819571e5",
-                    "path": "<Keyboard>/c",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard+Mouse",
-                    "action": "Climb",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "9679ef95-eec9-4b47-b87c-e1d47c26d909",
-                    "path": "<Gamepad>/buttonWest",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Climb",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "a3f92f1f-bc0a-4fa7-87a1-0509c3c42068",
                     "path": "<Pointer>/delta",
                     "interactions": "",
@@ -219,7 +188,7 @@
                 {
                     "name": "",
                     "id": "777234ef-3653-47a3-9b3d-2afe99bc0da4",
-                    "path": "<Mouse>/forwardButton",
+                    "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard+Mouse",

@@ -8,9 +8,11 @@ public class PlayerInputController : MonoBehaviour
     
     public Vector2 FrameMove { get; private set; }
     public Vector2 FrameLook { get; private set; }
-    public bool IsJumping { get; private set; }
+    public bool JumpDown { get; private set; }
+    public bool JumpHeld { get; private set; }
+    private bool previousJumpHeld;
+
     public bool IsSprinting { get; private set; }
-    public bool IsClimbing { get; private set; }
     public bool IsCrouching { get; private set; }
     public bool IsAiming { get; private set; }
     public bool IsShooting { get; private set; }
@@ -32,6 +34,13 @@ public class PlayerInputController : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        previousJumpHeld = JumpHeld;
+
+        JumpDown = false;
+    }
+    
     private void OnMove(InputValue inputValue)
     {
         FrameMove = inputValue.Get<Vector2>();
@@ -39,17 +48,15 @@ public class PlayerInputController : MonoBehaviour
     
     private void OnJump(InputValue inputValue)
     {
-        IsJumping = inputValue.isPressed;
+        bool isPressed = inputValue.isPressed;
+
+        JumpDown = isPressed && !previousJumpHeld;
+        JumpHeld = isPressed;
     }
     
     private void OnSprint(InputValue inputValue)
     {
         IsSprinting = inputValue.isPressed;
-    }
-    
-    private void OnClimb(InputValue inputValue)
-    {
-        IsClimbing = inputValue.isPressed;
     }
     
     private void OnCrouch(InputValue inputValue)
