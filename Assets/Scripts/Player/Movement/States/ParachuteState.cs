@@ -20,7 +20,8 @@ public class ParachutingSettings : StateSettings
 
 public class ParachuteState : MovementState
 {
-
+    private static readonly int IsParachuting = Animator.StringToHash("IsParachuting");
+    
     public ParachuteState(StateMachine stateMachine) : base(stateMachine)
     {
     }
@@ -40,6 +41,9 @@ public class ParachuteState : MovementState
         
         // Gives a small forward boost when deploying parachute
         stateMachine.GetRigidbody.AddForce(stateMachine.transform.forward * Settings.ParachuteStartBoost, ForceMode.VelocityChange);
+        
+        stateMachine.PlayerAnimator.SetBool(IsParachuting, true);
+        stateMachine.PlayerAnimator.CrossFade("Parachuting", 0.1f);
 
     }
 
@@ -60,6 +64,7 @@ public class ParachuteState : MovementState
 
     public override void OnExit()
     {
+        stateMachine.PlayerAnimator.SetBool(IsParachuting, false);
 
     }
 
