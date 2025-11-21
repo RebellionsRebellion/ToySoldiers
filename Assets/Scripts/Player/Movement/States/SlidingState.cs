@@ -1,5 +1,6 @@
 using System;
 using PrimeTween;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -15,6 +16,8 @@ public class SlidingSettings : StateSettings
     public float SlideHeight => slideHeight;
     [SerializeField] private AnimationCurve slideSpeedCurve;
     public AnimationCurve SlideSpeedCurve => slideSpeedCurve;
+    [SerializeField] private float slideCooldown = 1f;
+    public float SlideCooldown => slideCooldown;
 }
 
 public class SlidingState : MovementState
@@ -32,10 +35,6 @@ public class SlidingState : MovementState
     private Tween durationTween;
     
 
-    public override void Initialize()
-    {
-    }
-
     public override void OnEnter()
     {
         base.OnEnter();
@@ -46,6 +45,8 @@ public class SlidingState : MovementState
         durationTween = Tween.Delay(Settings.SlideDuration);
         
         slideTime = 0f;
+        
+        SetDelay(Settings.SlideCooldown);
     }
 
     public override void OnExit()
@@ -89,11 +90,6 @@ public class SlidingState : MovementState
             else
                 SwitchState(stateMachine.WalkingState);
         }
-    }
-
-    public override bool CanEnter()
-    {
-        return true;
     }
 
     public override void FixedTick()

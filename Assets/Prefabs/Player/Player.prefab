@@ -133,6 +133,7 @@ MonoBehaviour:
   cinemachineOrbitalFollow: {fileID: 0}
   playerHeight: 2.05
   playerRadius: 0.25
+  minGroundDistance: 0.15
   environmentLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -176,6 +177,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+    slideCooldown: 0.75
   climbingSettings:
     climbableLayer:
       serializedVersion: 2
@@ -286,14 +288,19 @@ MonoBehaviour:
     jumpLandDelay: 0.5
     rejumpDelay: 0.2
   fallingSettings:
-    fallingHorizontalSpeedMultiplier: 0.66
+    fallingHorizontalSpeedMultiplier: 1
     fallingVelocityThreshold: -3
+    speedTransitionTime: 1
+    speedTransitionEase: 6
   parachutingSettings:
     parachutingMaxSpeed: 10
     parachutingAcceleration: 15
     parachutingTurnSpeed: 500
     parachutingGravity: -15
     parachutingStartBoost: 5
+    minimumHeightToDeploy: 5
+    groundCheckVelocityThreshold: -3
+    minimumDeployDistanceFromWall: 3
   lookSensitivity: 1
 --- !u!143 &3582895354611659422
 CharacterController:

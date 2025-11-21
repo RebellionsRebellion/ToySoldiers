@@ -31,6 +31,9 @@ public class PlayerMovement : StateMachine
     public float PlayerHeight => playerHeight;
     [SerializeField] private float playerRadius = 0.5f;
     public float PlayerRadius => playerRadius;
+    [Tooltip("Distance from ground to be considered grounded")]
+    [SerializeField] private float minGroundDistance = 0.15f;
+    public float MinGroundDistance => minGroundDistance;
 
     [SerializeField] private LayerMask environmentLayer;
     public LayerMask EnvironmentLayer => environmentLayer;
@@ -274,15 +277,27 @@ public class PlayerMovement : StateMachine
         }
     }
     
+    public float GetGroundDistance()
+    {
+        float sphereRadius = cc.radius * 0.9f;
+        Vector3 sphereOrigin = transform.position + Vector3.up * (sphereRadius);
+        float maxDistance = 100f;
+        
+        if(Physics.SphereCast(sphereOrigin, sphereRadius, Vector3.down, out var hitInfo, maxDistance, environmentLayer))
+        {
+            return hitInfo.distance;
+        }
+        return maxDistance;
+        
+    }
+
     // Spherecast to check if on ground
     private bool CheckOnGround()
     {
-        float sphereRadius = cc.radius;
-        Vector3 sphereOrigin = transform.position + Vector3.up * (sphereRadius);
-        float rayLength = 0.15f;
-        
-        RaycastHit hitInfo;
-        return Physics.SphereCast(sphereOrigin, sphereRadius, Vector3.down, out hitInfo, rayLength, environmentLayer);
+        if(GetGroundDistance() < minGroundDistance)
+            return true;
+
+        return false;
     }
     
 }

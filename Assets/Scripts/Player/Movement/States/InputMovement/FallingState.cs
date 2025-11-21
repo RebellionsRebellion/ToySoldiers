@@ -1,4 +1,5 @@
 ﻿using System;
+using PrimeTween;
 using UnityEngine;
 
 [Serializable]
@@ -11,6 +12,11 @@ public class FallingSettings : StateSettings
     [Tooltip("Minimum vertical velocity needed before considering the player to be falling")]
     [SerializeField] private float fallingVelocityThreshold = 0.5f;
     public float FallingVelocityThreshold => fallingVelocityThreshold;
+    [Tooltip("Time taken to transition speed from previous to new speed")]
+    [SerializeField] private float speedTransitionTime = 0.5f;
+    public float SpeedTransitionTime => speedTransitionTime;
+    [SerializeField] private Ease speedTransitionEase = Ease.OutQuad;
+    public Ease SpeedTransitionEase => speedTransitionEase;
 }
 
 public class FallingState : InputMoveState
@@ -18,20 +24,24 @@ public class FallingState : InputMoveState
     private static readonly int IsFalling = Animator.StringToHash("IsFalling");
     
     public new FallingSettings Settings => stateMachine.FallingSettings;
-    public override float GetSpeedMultiplier => Settings.FallingHorizontalSpeedMultiplier;
+    public override float GetSpeedMultiplier => currentSpeedMultiplier;
+    private float currentSpeedMultiplier = 1f;
+    private float taretSpeedMultiplier = 1f;
+    private float previousSpeedMultiplier = 1f;
     public override bool CanJump => false;
 
     public FallingState(StateMachine stateMachine) : base(stateMachine)
     {
     }
 
-    public override void Initialize()
-    {
-    }
-
     public override void OnEnter()
     {
         base.OnEnter();
+        
+        taretSpeedMultiplier = Settings.FallingHorizontalSpeedMultiplier * previousSpeedMultiplier;
+        
+        // Tween current multiple from previous to target
+        Tween.Custom(previousSpeedMultiplier, taretSpeedMultiplier, Settings.SpeedTransitionTime, value => currentSpeedMultiplier = value, Settings.SpeedTransitionEase);
 
         stateMachine.PlayerAnimator.CrossFade("Falling", 0.05f);
         stateMachine.PlayerAnimator.SetBool(IsFalling, true);
@@ -57,13 +67,13 @@ public class FallingState : InputMoveState
         if(stateMachine.IsGrounded)
             SwitchState(stateMachine.WalkingState);
 
-        if (stateMachine.InputController.IsJumping)
+        if (stateMachine.InputController.JumpDown)
             SwitchState(stateMachine.ParachuteState);
     }
-
-
-    public override bool CanEnter()
+    
+    public void SetSpeedMultiplier(float currentSpeedMultiplier)
     {
-        return true;
+        previousSpeedMultiplier = currentSpeedMultiplier;
     }
+
 }
