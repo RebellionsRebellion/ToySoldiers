@@ -11,8 +11,9 @@ public class WeaponsSystem : MonoBehaviour
     [Tooltip("Player camera used for the obstruction check")]
     [SerializeField] private Camera playerCamera;   // player camera used for the obstruction check
     [Tooltip("Test cube to visualise spread")]
-    [SerializeField] private transform firePoint;
+    [SerializeField] private Transform firePoint;
     public Transform cube;                          // test cube to visualise spread
+    private Crosshair crosshair;                    // Crosshair 
 
 
     // spread paramaters
@@ -32,6 +33,9 @@ public class WeaponsSystem : MonoBehaviour
 
     private void Start()
     {
+        // Find crosshair in scene
+        crosshair = FindFirstObjectByType<Crosshair>();
+        
         // initialise the currently held weapon
         if(currentWeapon == null)
             return;
@@ -73,6 +77,9 @@ public class WeaponsSystem : MonoBehaviour
     {
         currentWeaponInstance.weaponSpread.UpdateSpreadOverTime();
         cube.localScale = new Vector3(currentWeaponInstance.weaponSpread.CurrentSpreadAmount, 1f, 1f);
+        
+        //UI Crosshair update
+        crosshair.UpdateSpread(currentWeaponInstance.weaponSpread.CurrentSpreadAmount);
     }
 
     // called when for example the player clicks, or called every frame if holding down for full auto
