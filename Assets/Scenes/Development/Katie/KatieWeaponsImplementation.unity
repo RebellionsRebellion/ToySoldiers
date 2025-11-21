@@ -4419,6 +4419,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 330585545}
     - target: {fileID: 7571786518036270854, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
+      propertyPath: canShoot.m_Bits
+      value: 119
+      objectReference: {fileID: 0}
+    - target: {fileID: 7571786518036270854, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
       propertyPath: playerLayer.m_Bits
       value: 128
       objectReference: {fileID: 0}

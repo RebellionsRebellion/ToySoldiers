@@ -137,7 +137,7 @@ public class WeaponsSystem : MonoBehaviour
         if (Physics.Raycast(firePoint.position, cameraRay.direction, out hit, Mathf.Infinity, canShoot))
         {
             if (hit.collider.CompareTag("Enemy"))
-                hit.collider.GetComponent<AIController>().TakeDamage(currentWeapon.WeaponData.Damage);
+                hit.collider.GetComponent<AIController>().TakeDamage(999f);
         }
 
         return firePoint.position + cameraRay.direction * 100f; // 100 units forward
