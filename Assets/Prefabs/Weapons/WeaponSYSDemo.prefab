@@ -441,7 +441,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2668995888162392}
         m_TargetAssemblyTypeName: WeaponsSystem, Assembly-CSharp
-        m_MethodName: FireWeapon
+        m_MethodName: Fire
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

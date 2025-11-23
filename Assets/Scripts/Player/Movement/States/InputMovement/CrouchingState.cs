@@ -23,10 +23,6 @@ public class CrouchingState : InputMoveState
     {
     }
 
-    public override void Initialize()
-    {
-    }
-
     public override void OnEnter()
     {
         base.OnEnter();
@@ -39,11 +35,6 @@ public class CrouchingState : InputMoveState
     {
         stateMachine.ChangeHeightDefault();
         stateMachine.PlayerAnimator.SetBool(IsCrouching, false);
-    }
-
-    public override bool CanEnter()
-    {
-        return true;
     }
 
     public override void Tick()
