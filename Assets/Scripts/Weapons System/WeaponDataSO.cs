@@ -2,7 +2,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "NewWeapon", menuName = "ScriptableObjects/Weapon")]
-public class WeaponSO : ScriptableObject
+public class WeaponDataSO : ScriptableObject
 {
     [Header("Name")]
     [Tooltip("How the weapon will be referred to in code")]
@@ -48,14 +48,7 @@ public class WeaponSO : ScriptableObject
     [Tooltip("A reference to the weapon prefab with its fire point child")]
     public GameObject WeaponPrefab;
 
-    // code values used in runtime
-    [Header("Runtime values (do not edit)")]
-    public int CurrentAmmoInMag;
-    [HideInInspector] public WeaponSpread weaponSpread;
-    [HideInInspector] public string CurrentFireMode;
-    [HideInInspector] public Transform FirePoint;
-
-    public void CopyFrom(WeaponSO other)
+    public void CopyFrom(WeaponDataSO other)
     {
         ClassName = other.ClassName;
         DisplayName = other.DisplayName;

@@ -31,6 +31,9 @@ public class PlayerMovement : StateMachine
     public float PlayerHeight => playerHeight;
     [SerializeField] private float playerRadius = 0.5f;
     public float PlayerRadius => playerRadius;
+    [Tooltip("Distance from ground to be considered grounded")]
+    [SerializeField] private float minGroundDistance = 0.15f;
+    public float MinGroundDistance => minGroundDistance;
 
     [SerializeField] private LayerMask environmentLayer;
     public LayerMask EnvironmentLayer => environmentLayer;
@@ -52,6 +55,8 @@ public class PlayerMovement : StateMachine
     public JumpingSettings JumpingSettings => jumpingSettings;
     [SerializeField] private FallingSettings fallingSettings = new FallingSettings();
     public FallingSettings FallingSettings => fallingSettings;
+    [SerializeField] private ParachutingSettings parachutingSettings = new ParachutingSettings();
+    public ParachutingSettings ParachutingSettings => parachutingSettings;
     
     private WalkingState walkingState; 
     public WalkingState WalkingState => walkingState;
@@ -130,6 +135,7 @@ public class PlayerMovement : StateMachine
         parachuteState = new ParachuteState(this);
         parachuteState.Initialize();
         
+        
         SwitchState(walkingState, null);
     }
 
@@ -137,9 +143,32 @@ public class PlayerMovement : StateMachine
     {
         base.Update();
         
-        if(canRotatePlayer)
-            FrameLook();
+        if (!(currentState is IMovementState { UseRigidbody: true }))
+        {
+            // Rotating player when no rigidbody
+            if(canRotatePlayer)
+                FrameLook();
+            
+            // Only apply velocity if currently not using rigidbody
+            ApplyVelocity();
+        }
+    }
+
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
         
+        if (currentState is IMovementState { UseRigidbody: true })
+        {
+            // Rotating player when using rigidbody
+            if(canRotatePlayer)
+                FrameLook();
+        }
+    }
+
+
+    private void ApplyVelocity()
+    {
         // Apply gravity
         if (currentState is IMovementState { UseGravity: true })
         {
@@ -158,14 +187,11 @@ public class PlayerMovement : StateMachine
     }
 
     
-    private Vector3 animDeltaPosition;
-    private Vector3 animVelocity;
     private void OnAnimatorMove()
     {
         if (playerAnimator.applyRootMotion)
         {
-            animDeltaPosition = playerAnimator.deltaPosition;
-            animVelocity = animDeltaPosition / Time.deltaTime;
+            Vector3 animDeltaPosition = playerAnimator.deltaPosition;
             cc.Move(animDeltaPosition);
         }
     }
@@ -205,10 +231,14 @@ public class PlayerMovement : StateMachine
         ChangeHeight(defaultColliderHeight);
     }
 
+    private RigidbodyInterpolation originalRigidbodyInterpolation;
     public void ToggleRigidbody(bool value)
     {
         cc.enabled = !value;
         rb.isKinematic = !value;
+        if(rb.interpolation != RigidbodyInterpolation.None)
+            originalRigidbodyInterpolation = rb.interpolation;
+        rb.interpolation = value ? originalRigidbodyInterpolation : RigidbodyInterpolation.None;
         col.enabled = value;
     }
 
@@ -247,15 +277,27 @@ public class PlayerMovement : StateMachine
         }
     }
     
+    public float GetGroundDistance()
+    {
+        float sphereRadius = cc.radius * 0.9f;
+        Vector3 sphereOrigin = transform.position + Vector3.up * (sphereRadius);
+        float maxDistance = 100f;
+        
+        if(Physics.SphereCast(sphereOrigin, sphereRadius, Vector3.down, out var hitInfo, maxDistance, environmentLayer))
+        {
+            return hitInfo.distance;
+        }
+        return maxDistance;
+        
+    }
+
     // Spherecast to check if on ground
     private bool CheckOnGround()
     {
-        float sphereRadius = cc.radius;
-        Vector3 sphereOrigin = transform.position + Vector3.up * (sphereRadius);
-        float rayLength = 0.25f;
-        
-        RaycastHit hitInfo;
-        return Physics.SphereCast(sphereOrigin, sphereRadius, Vector3.down, out hitInfo, rayLength, environmentLayer);
+        if(GetGroundDistance() < minGroundDistance)
+            return true;
+
+        return false;
     }
     
 }
