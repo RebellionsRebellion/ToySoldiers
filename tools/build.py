@@ -19,21 +19,22 @@ def get_unity_path(custom_path=None):
     else:
         raise Exception(f"Unsupported OS: {system}")
     
-def build_project(target, outputPath, projectPath, buildNumber, versionPath, unityPath):
-    ver =  versionPath.read_text().strip()
-    fullVer = f"{ver}.build-{buildNumber}"
-    
+def build_project(target, output_path, project_path, build_number, version_path, unity_path):
+    ver = version_path.read_text().strip()
+    fullVer = f"{ver}.build-{build_number}"
+
     cmd = [
-        unityPath,
-        "-quit", "-batchmode", "-nographics", "disableassemblyupdater",
+        unity_path,
+        "-quit", "-batchmode", "-nographics", "-disableassemblyupdater",
         "-accept-apiupdate", "-disableburst-compilation",
-        "-projectPath", projectPath,
+        "-projectPath", project_path,
         "-executeMethod", "RIGPR.Editor.BuildManager.BuildProject",
         "-buildVersion", fullVer,
         "-buildTarget", target,
-        "-outputPath", outputPath
+        "-outputPath", output_path,
+        "-scriptingBackend", args.scripting_backend
     ]
-    
+
     print(f"Building Unity Project:\n{' '.join(cmd)}")
 
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -42,9 +43,16 @@ def build_project(target, outputPath, projectPath, buildNumber, versionPath, uni
     process.stdout.close()
     return_code = process.wait()
 
+    if return_code != 0:
+        print(f"\nBuild failed with exit code {return_code}")
+        sys.exit(return_code)
+    else:
+        print(f"\nBuild completed successfully: {output_path}")
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Build the Rebellion RIGPR project for a specified target")
+    parser = argparse.ArgumentParser(description="Build Toy Soldiers for a specified target")
     parser.add_argument("--target", choices=["Win64", "Linux64", "OSXUniversal"], required=True)
+    parser.add_argument("--scripting-backend", choices=["mono", "il2cpp"], default="il2cpp", required=True)
     parser.add_argument("--output", help="Output path for the build")
     parser.add_argument("--build-number", default="0", help="CI/CD build number")
     parser.add_argument("--unity-path", help="Optional custom path to Unity executable")
@@ -60,7 +68,7 @@ if __name__ == "__main__":
     else:
         platform_dir = args.target.lower().replace("64", "")
         ext = "exe" if args.target == "Win64" else "x86_64"
-        output = REPO_ROOT / "Builds" / platform_dir / f"RebellionRIGPR.{ext}"
+        output = REPO_ROOT / "Builds" / platform_dir / f"ToySoldiers.{ext}"
 
     unity_path = get_unity_path(args.unity_path)
     build_game(args.target, str(output), project_path, args.build_number, version_path, unity_path)
