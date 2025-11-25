@@ -12,8 +12,6 @@ public class SlidingSettings : StateSettings
     public float SlideForwardSpeed => slideForwardSpeed;
     [SerializeField] private float slideDuration = 1f;
     public float SlideDuration => slideDuration;
-    [SerializeField] private float slideHeight = 0.75f;
-    public float SlideHeight => slideHeight;
     [SerializeField] private AnimationCurve slideSpeedCurve;
     public AnimationCurve SlideSpeedCurve => slideSpeedCurve;
     [SerializeField] private float slideCooldown = 1f;
@@ -39,7 +37,7 @@ public class SlidingState : MovementState
     {
         base.OnEnter();
 
-        stateMachine.ChangeHeight(Settings.SlideHeight);
+        stateMachine.ChangeHeight(stateMachine.CrouchingSettings.CrouchingHeight);
         stateMachine.PlayerAnimator.SetBool(IsSliding, true);
         
         durationTween = Tween.Delay(Settings.SlideDuration);
