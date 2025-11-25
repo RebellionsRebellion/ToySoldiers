@@ -63,6 +63,7 @@ MonoBehaviour:
   cinemachineInputAxisController: {fileID: 7562103412146830717}
   playerHeight: 2
   playerRadius: 0.25
+  playerHeadNormalizedHeight: 0.8
   minGroundDistance: 0.15
   environmentLayer:
     serializedVersion: 2
@@ -213,7 +214,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     climbStartMinStamina: 0.2
   jumpingSettings:
-    jumpHeight: 3.75
+    jumpHeight: 4.25
     jumpLandDelay: 0.5
     rejumpDelay: 0.2
   fallingSettings:

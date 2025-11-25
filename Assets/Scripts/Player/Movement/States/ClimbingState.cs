@@ -235,12 +235,16 @@ public class ClimbingState : MovementState
         if (climbTimer < Settings.ClimbingStartLockIntoPlace)
         {
             float lockT = climbTimer / Settings.ClimbingStartLockIntoPlace;
-            Vector3 direction = (climbStartData.PlayerPosition - climbStartData.RaycastHit.point).normalized;
+            Vector3 direction = -climbStartData.startNormal;
+
             // Lerp in direction
-            Vector3 targetPosition = climbStartData.RaycastHit.point + direction * Settings.ClimbDistanceFromWall; // Half meter from wall
+            Vector3 targetPosition = climbStartData.startPosition - direction * Settings.ClimbDistanceFromWall;
+            // Since the start position is based on the players head, shift target position down to feet
+            targetPosition.y -= stateMachine.PlayerHeadHeight;
+            
             stateMachine.SetPosition(Vector3.Lerp(climbStartData.PlayerPosition, targetPosition, lockT));
             // Face wall
-            Quaternion targetRotation = Quaternion.LookRotation(-climbStartData.RaycastHit.normal);
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
             stateMachine.SetRotation(Quaternion.Slerp(stateMachine.PlayerTransform.rotation, targetRotation, lockT));
         }
         
@@ -377,18 +381,20 @@ public class ClimbingState : MovementState
         Transform playerTransform = stateMachine.PlayerTransform;
         Vector3 bottomOrigin = playerTransform.position + Vector3.up * 0.1f;
         Vector3 topOrigin = playerTransform.position + Vector3.up * (stateMachine.PlayerHeight - 0.1f);
-        Vector3 midOrigin = (bottomOrigin + topOrigin) / 2f;
+        Vector3 headOrigin = playerTransform.position + Vector3.up * (stateMachine.PlayerHeadHeight - 0.1f);
         Vector3 direction = playerTransform.forward;
         Vector3 sideDirection = playerTransform.right * stateMachine.PlayerRadius;
         // Create rays for each direction
-        Ray bottomRay = new Ray(bottomOrigin, direction);
-        Ray topRay = new Ray(topOrigin, direction);
-        Ray leftRay = new Ray(midOrigin - sideDirection, direction);
-        Ray rightRay = new Ray(midOrigin + sideDirection, direction);
+        Ray downRay = new Ray(bottomOrigin, direction);
+        Ray upRay = new Ray(topOrigin, direction);
+        Ray headRay = new Ray(headOrigin, direction);
+        Ray leftRay = new Ray(headOrigin - sideDirection, direction);
+        Ray rightRay = new Ray(headOrigin + sideDirection, direction);
+        
         
         ClimbDirections climbDirections = ClimbDirections.None;
         
-        if (Physics.Raycast(bottomRay, out var hitInfo, Settings.ClimbRange, Settings.ClimbableLayer))
+        if (Physics.Raycast(headRay, out var hitInfo, Settings.ClimbRange, Settings.ClimbableLayer))
         {
             Vector3 normal = hitInfo.normal;
             // Calculate angle between normal and ray direction
@@ -404,7 +410,7 @@ public class ClimbingState : MovementState
             climbDirections = ClimbDirections.Up | ClimbDirections.Down | ClimbDirections.Left | ClimbDirections.Right;
             
             // If some ray don't hit, remove from result
-            if (!Physics.Raycast(topRay, Settings.ClimbRange, Settings.ClimbableLayer))
+            if (!Physics.Raycast(upRay, Settings.ClimbRange, Settings.ClimbableLayer))
             {
                 climbDirections &= ~ClimbDirections.Up;
             }
@@ -416,13 +422,33 @@ public class ClimbingState : MovementState
             {
                 climbDirections &= ~ClimbDirections.Right;
             }
+            if (!Physics.Raycast(downRay, Settings.ClimbRange, Settings.ClimbableLayer))
+            {
+                climbDirections &= ~ClimbDirections.Down;
+            }
             
             // Set the start data if they aren't currently climbing
             if (stateMachine.CurrentState != this)
-                climbStartData = new ClimbStartData(hitInfo, playerTransform.position);
+            {
+                Vector3 startPosition = hitInfo.point;
+                Vector3 startNormal = hitInfo.normal;
+                
+                // Shift start position if the player cant climb down
+                // For situations when they jump up to a ledge
+                if (!climbDirections.HasFlag(ClimbDirections.Down))
+                {
+                    startPosition += Vector3.up * 0.25f;
+                }
+                
+                climbStartData = new ClimbStartData(startPosition, startNormal, playerTransform.position);
+
+                // Draw ray at start hit point
+                Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.green, 1f);
+            }
 
         }
-
+//        Debug.Log(climbDirections);
+        
         return climbDirections;
     }
     
@@ -432,7 +458,11 @@ public class ClimbingState : MovementState
                                                              climbDirections.HasFlag(ClimbDirections.Down) || 
                                                              climbDirections.HasFlag(ClimbDirections.Left) || 
                                                              climbDirections.HasFlag(ClimbDirections.Right);
+    
     public bool CanClimb() => CanClimb(GetClimbState());
+    private bool CanInitiateClimb(ClimbDirections climbDirections) => climbDirections.HasFlag(ClimbDirections.Up);
+    public bool CanInitiateClimb() => CanInitiateClimb(GetClimbState());
+
     private bool CanHang(ClimbDirections climbDirections) => CanClimb(climbDirections) && !climbDirections.HasFlag(ClimbDirections.Up);
     public bool CanHang() => CanHang(GetClimbState());
     [Flags]
@@ -448,13 +478,15 @@ public class ClimbingState : MovementState
     private struct ClimbStartData
     {
         public bool IsValid;
-        public RaycastHit RaycastHit;
+        public Vector3 startPosition;
+        public Vector3 startNormal;
         public Vector3 PlayerPosition;
         
-        public ClimbStartData(RaycastHit rayHit, Vector3 playerPosition)
+        public ClimbStartData(Vector3 startPosition, Vector3 startNormal, Vector3 playerPosition)
         {
             this.IsValid = true;
-            this.RaycastHit = rayHit;
+            this.startPosition = startPosition;
+            this.startNormal = startNormal;
             this.PlayerPosition = playerPosition;
         }
     }

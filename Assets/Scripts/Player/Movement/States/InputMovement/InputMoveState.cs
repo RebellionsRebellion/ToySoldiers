@@ -110,7 +110,7 @@ public abstract class InputMoveState : MovementState
 
     public override void CheckTransitions()
     {
-        if (stateMachine.ClimbingState.CanClimb() && stateMachine.ClimbingState.CanEnter())
+        if (stateMachine.ClimbingState.CanInitiateClimb() && stateMachine.ClimbingState.CanEnter())
         {
             SwitchState(stateMachine.ClimbingState);
         }

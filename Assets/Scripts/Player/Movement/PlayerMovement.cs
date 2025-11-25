@@ -36,6 +36,10 @@ public class PlayerMovement : StateMachine
     public float PlayerHeight => playerHeight;
     [SerializeField] private float playerRadius = 0.5f;
     public float PlayerRadius => playerRadius;
+    [Tooltip("Normalized height of the player's head relative to total height (0 = feet, 1 = top of head)")]
+    [Range(0,1)] [SerializeField] private float playerHeadNormalizedHeight = 0.9f;
+    public float PlayerHeadNormalizedHeight => playerHeadNormalizedHeight;
+    public float PlayerHeadHeight => playerHeight * PlayerHeadNormalizedHeight;
     [Tooltip("Distance from ground to be considered grounded")]
     [SerializeField] private float minGroundDistance = 0.15f;
     public float MinGroundDistance => minGroundDistance;
