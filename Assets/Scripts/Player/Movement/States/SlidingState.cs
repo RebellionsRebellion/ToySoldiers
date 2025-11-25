@@ -37,7 +37,7 @@ public class SlidingState : MovementState
     {
         base.OnEnter();
 
-        stateMachine.ChangeHeight(stateMachine.CrouchingSettings.CrouchingHeight);
+        stateMachine.ChangeHeight(stateMachine.CrouchingState.GetCrouchHeight);
         stateMachine.PlayerAnimator.SetBool(IsSliding, true);
         
         durationTween = Tween.Delay(Settings.SlideDuration);

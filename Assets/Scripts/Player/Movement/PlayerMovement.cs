@@ -226,6 +226,9 @@ public class PlayerMovement : StateMachine
     
     public void ChangeHeight(float newHeight)
     {
+        // Clamp height to double the radius minimum
+        newHeight = Mathf.Max(newHeight, cc.radius * 2f);
+        
         cc.height = newHeight;
         Vector3 center = cc.center;
         center.y = newHeight / 2f;
