@@ -155,6 +155,7 @@ public class ClimbingState : MovementState
             return;
         
         ClimbDirections climbState = GetClimbState();
+        
         // If they can climb or hang
         if (CanClimb(climbState))
         {
@@ -199,7 +200,7 @@ public class ClimbingState : MovementState
             
             stateMachine.PlayerAnimator.SetFloat(ClimbSpeed, currentClimbSpeed);
             
-            Vector3 upVelocity = Vector3.up * (Settings.ClimbVerticalSpeed * upInput);
+            Vector3 upVelocity = climbStartData.UpDirection * (Settings.ClimbVerticalSpeed * upInput);
             Vector3 rightVelocity = stateMachine.PlayerTransform.right * (Settings.ClimbHorizontalSpeed * sideInput);
             Vector3 finalVelocity = upVelocity + rightVelocity;
             // Apply sprint multiplier
@@ -240,7 +241,7 @@ public class ClimbingState : MovementState
             // Lerp in direction
             Vector3 targetPosition = climbStartData.startPosition - direction * Settings.ClimbDistanceFromWall;
             // Since the start position is based on the players head, shift target position down to feet
-            targetPosition.y -= stateMachine.PlayerHeadHeight;
+            targetPosition -= climbStartData.UpDirection * stateMachine.PlayerHeadHeight;
             
             stateMachine.SetPosition(Vector3.Lerp(climbStartData.PlayerPosition, targetPosition, lockT));
             // Face wall
@@ -300,15 +301,15 @@ public class ClimbingState : MovementState
         //stateMachine.AddVelocity(Vector3.up * stateMachine.JumpForce);
         
         // Calculate ending position
-        Vector3 verticalOffset = Vector3.up * (stateMachine.PlayerHeight + 0.5f);
+        Vector3 verticalOffset = climbStartData.UpDirection * (stateMachine.PlayerHeight + 0.5f);
         Vector3 forwardOffset = stateMachine.PlayerTransform.forward * Settings.ClimbVaultDistance;
         Vector3 targetPosition = stateMachine.PlayerTransform.position + verticalOffset + forwardOffset;
         // Raycast down to find ground
         Vector3 vaultPosition = targetPosition;
         Ray downRay = new Ray(targetPosition, Vector3.down);
-        if (Physics.Raycast(downRay, out var hitInfo, stateMachine.PlayerHeight + 1.5f, Settings.ClimbableLayer))
+        if (Physics.SphereCast(downRay, Settings.ClimbVaultDistance, out var hitInfo, stateMachine.PlayerHeight + 1.5f, Settings.ClimbableLayer))
         {
-            vaultPosition = hitInfo.point + Vector3.up * 0.1f; // Slightly above ground
+            vaultPosition = hitInfo.point + climbStartData.UpDirection * 0.1f; // Slightly above ground
         }
         
         stateMachine.PlayerAnimator.CrossFade("ClimbingFinish", 0.1f);
@@ -328,6 +329,7 @@ public class ClimbingState : MovementState
         float vaultTimer;
         float vaultDuration = Settings.ClimbVaultDuration;
         Vector3 startPosition = stateMachine.PlayerTransform.position;
+        Vector3 startRotation = stateMachine.PlayerTransform.localEulerAngles;
         for (vaultTimer = 0f; vaultTimer < vaultDuration; vaultTimer += Time.deltaTime)
         {
             float t = vaultTimer / vaultDuration;
@@ -340,6 +342,11 @@ public class ClimbingState : MovementState
             Vector3 horizontalPosition = Vector3.Lerp(startPosition, new Vector3(targetPosition.x, startPosition.y, targetPosition.z), horizontalT);
             Vector3 newPosition = new Vector3(horizontalPosition.x, verticalPosition.y, horizontalPosition.z);
             stateMachine.SetPosition(newPosition);
+            
+            // Lerp X rotation back to 0
+            Quaternion targetRotation = Quaternion.Euler(0f, startRotation.y, startRotation.z);
+            stateMachine.SetRotation(Quaternion.Slerp(stateMachine.PlayerTransform.rotation, targetRotation, t));
+            
             yield return null;
         }
         
@@ -379,9 +386,9 @@ public class ClimbingState : MovementState
     public ClimbDirections GetClimbState()
     {
         Transform playerTransform = stateMachine.PlayerTransform;
-        Vector3 bottomOrigin = playerTransform.position + Vector3.up * 0.1f;
-        Vector3 topOrigin = playerTransform.position + Vector3.up * (stateMachine.PlayerHeight - 0.1f);
-        Vector3 headOrigin = playerTransform.position + Vector3.up * (stateMachine.PlayerHeadHeight - 0.1f);
+        Vector3 bottomOrigin = playerTransform.position + stateMachine.transform.up * 0.1f;
+        Vector3 topOrigin = playerTransform.position + stateMachine.transform.up * (stateMachine.PlayerHeight - 0.1f);
+        Vector3 headOrigin = playerTransform.position + stateMachine.transform.up * (stateMachine.PlayerHeadHeight - 0.1f);
         Vector3 direction = playerTransform.forward;
         Vector3 sideDirection = playerTransform.right * stateMachine.PlayerRadius;
         // Create rays for each direction
@@ -394,8 +401,17 @@ public class ClimbingState : MovementState
         
         ClimbDirections climbDirections = ClimbDirections.None;
         
-        if (Physics.Raycast(headRay, out var hitInfo, Settings.ClimbRange, Settings.ClimbableLayer))
+        if (Physics.Raycast(headRay, out var hitInfo, 100, Settings.ClimbableLayer))
         {
+            // If hit position is too far, ignore
+            // Do additional check at feet in case of walls slanted forward
+            if (Vector3.Distance(hitInfo.point, headOrigin) > Settings.ClimbRange)
+            {
+                if(!Physics.Raycast(downRay, Settings.ClimbRange, Settings.ClimbableLayer))
+                    return climbDirections;
+            }
+            
+            // If up direction is too steep, ignore
             Vector3 normal = hitInfo.normal;
             // Calculate angle between normal and ray direction
             float angle = Vector3.SignedAngle(-normal, direction, Vector3.up);
@@ -432,12 +448,12 @@ public class ClimbingState : MovementState
             {
                 Vector3 startPosition = hitInfo.point;
                 Vector3 startNormal = hitInfo.normal;
-                
                 // Shift start position if the player cant climb down
                 // For situations when they jump up to a ledge
                 if (!climbDirections.HasFlag(ClimbDirections.Down))
                 {
-                    startPosition += Vector3.up * 0.25f;
+                    Vector3 upDirection = Vector3.Cross(startNormal, Vector3.right).normalized;
+                    startPosition += upDirection * 0.25f;
                 }
                 
                 climbStartData = new ClimbStartData(startPosition, startNormal, playerTransform.position);
@@ -481,6 +497,8 @@ public class ClimbingState : MovementState
         public Vector3 startPosition;
         public Vector3 startNormal;
         public Vector3 PlayerPosition;
+        public Vector3 UpDirection;
+        
         
         public ClimbStartData(Vector3 startPosition, Vector3 startNormal, Vector3 playerPosition)
         {
@@ -488,6 +506,8 @@ public class ClimbingState : MovementState
             this.startPosition = startPosition;
             this.startNormal = startNormal;
             this.PlayerPosition = playerPosition;
+            Vector3 rightDirection = Vector3.Cross(Vector3.up, startNormal).normalized;
+            UpDirection = Vector3.Cross(startNormal, rightDirection).normalized;
         }
     }
 }
