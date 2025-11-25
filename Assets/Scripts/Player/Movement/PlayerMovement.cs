@@ -110,8 +110,10 @@ public class PlayerMovement : StateMachine
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         // Copy character controller collider data to capsule collider
-        col.radius = cc.radius;
-        col.height = cc.height;
+        cc.radius = playerRadius;
+        cc.height = playerHeight;
+        col.radius = playerRadius;
+        col.height = playerHeight;
         col.center = cc.center;
         
         Cursor.lockState = CursorLockMode.Locked;
