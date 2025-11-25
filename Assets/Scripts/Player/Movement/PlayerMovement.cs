@@ -269,7 +269,7 @@ public class PlayerMovement : StateMachine
         transform.Rotate(Vector3.up, finalInput.x);
 
         // Rotate third person tracker
-        thirdPersonTracker.transform.rotation *= Quaternion.AngleAxis(finalInput.y, Vector3.right);
+        thirdPersonTracker.transform.rotation *= Quaternion.AngleAxis(-finalInput.y, Vector3.right);
         // Clamp third person X axis
         Vector3 trackerEuler = thirdPersonTracker.localEulerAngles;
         trackerEuler.z = 0;
