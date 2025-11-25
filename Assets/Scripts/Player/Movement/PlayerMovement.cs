@@ -22,8 +22,13 @@ public class PlayerMovement : StateMachine
     public Camera PlayerCamera => playerCamera;
     [SerializeField] private Animator playerAnimator;
     public Animator PlayerAnimator => playerAnimator;
+    [SerializeField] private Transform thirdPersonTracker;
+    public Transform ThirdPersonTracker => thirdPersonTracker;
+    [SerializeField] private CinemachineCamera thirdPersonCamera;
+    public CinemachineCamera ThirdPersonCamera => thirdPersonCamera;
+    [SerializeField] private CinemachineCamera climbingCamera;
+    public CinemachineCamera ClimbingCamera => climbingCamera;
     [SerializeField] private CinemachineInputAxisController cinemachineInputAxisController;
-    [SerializeField] private CinemachineOrbitalFollow cinemachineOrbitalFollow;
 
     [Header("Attributes")] 
     [Tooltip("Height of the player character, used in things like climbing checks")]
@@ -250,6 +255,12 @@ public class PlayerMovement : StateMachine
         
         // Rotate player Y axis
         transform.Rotate(Vector3.up, finalInput.x);
+
+        // Rotate third person tracker
+        thirdPersonTracker.Rotate(Vector3.right, finalInput.y);
+        // Clamp third person X axis
+        Vector3 eulerAngles = thirdPersonTracker.transform.localEulerAngles;
+        thirdPersonTracker.transform.localEulerAngles = new Vector3(Mathf.Clamp(eulerAngles.x, -80, 80), eulerAngles.y, eulerAngles.z);
         
     }
     public void ToggleCameraXOrbit(bool enable)
@@ -262,16 +273,6 @@ public class PlayerMovement : StateMachine
                 controller.Enabled = enable;
                 // Toggle player from rotating with camera
                 canRotatePlayer = !enable;
-                if (!enable)
-                {
-                    cinemachineOrbitalFollow.HorizontalAxis.TriggerRecentering();
-                    cinemachineOrbitalFollow.HorizontalAxis.Recentering = originalCameraRecentering;
-                }
-                else
-                {
-                    originalCameraRecentering = cinemachineOrbitalFollow.HorizontalAxis.Recentering;
-                    cinemachineOrbitalFollow.HorizontalAxis.Recentering = climbingSettings.ClimbCameraRecentering;
-                }
                 break;
             }
         }

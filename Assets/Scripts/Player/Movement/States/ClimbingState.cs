@@ -115,7 +115,8 @@ public class ClimbingState : MovementState
             return;
         }
 
-        this.stateMachine.ToggleCameraXOrbit(true);
+        stateMachine.ToggleCameraXOrbit(true);
+        stateMachine.ClimbingCamera.Priority = 100;
         
         stateMachine.PlayerAnimator.SetBool(IsClimbing, true);
         
@@ -129,8 +130,8 @@ public class ClimbingState : MovementState
 
     public override void OnExit()
     {
-        this.stateMachine.ToggleCameraXOrbit(false);
-        if(!didVault)
+        stateMachine.ToggleCameraXOrbit(false);
+        if (!didVault)
             stateMachine.SetVelocity(Vector3.zero);
         
         // Climb speed needs to be set to 1 to finish climb animation properly
@@ -312,6 +313,9 @@ public class ClimbingState : MovementState
         stateMachine.StartCoroutine(VaultingOverLedge(vaultPosition));
                 
         didVault = true;
+
+        // Reset camera
+        stateMachine.ClimbingCamera.Priority = 0;
     }
 
     private IEnumerator VaultingOverLedge(Vector3 targetPosition)
