@@ -43,6 +43,9 @@ public class PlayerMovement : StateMachine
     [Tooltip("Distance from ground to be considered grounded")]
     [SerializeField] private float minGroundDistance = 0.15f;
     public float MinGroundDistance => minGroundDistance;
+    [Tooltip("Speed that gravity will push you down a slope")]
+    [SerializeField] private float slopeSlideSpeed = 2;
+    public float SlopeSlideSpeed => slopeSlideSpeed;
 
     [SerializeField] private LayerMask environmentLayer;
     public LayerMask EnvironmentLayer => environmentLayer;
@@ -104,7 +107,7 @@ public class PlayerMovement : StateMachine
     private InputAxis.RecenteringSettings originalCameraRecentering;
     
     // Public Properties
-    public bool IsGrounded => CheckOnGround();
+    public bool IsGrounded => CheckOnGround(); 
 
     private void Awake()
     {
@@ -279,6 +282,30 @@ public class PlayerMovement : StateMachine
         thirdPersonTracker.localEulerAngles = trackerEuler;
         
     }
+    
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Vector3 hitNormal = hit.normal;
+        #region Slope Sliding
+        // Source: https://discussions.unity.com/t/character-controller-slide-down-slope/188130/2
+        // Check if we are sliding
+        var angle = Vector3.Angle(Vector3.up, hitNormal);
+        bool isSliding = (angle > hit.controller.slopeLimit && angle <= 90f);
+        if (isSliding && !IsGrounded && currentVelocity.y <= 0f){
+            {
+                var slopeRotation = Quaternion.FromToRotation(Vector3.up, hitNormal);
+                // Calculate speed based on rotation from up
+                float slopeSpeed = (angle-45) / 45f; // Normalize between 0 and 1 from 45 to 90 degrees
+                slopeSpeed++;
+                
+                var slopeVelocity = slopeRotation * new Vector3(hitNormal.x, 0f, hitNormal.z) * slopeSlideSpeed * slopeSpeed;
+                currentVelocity = slopeVelocity;
+            }
+
+        }
+        #endregion
+
+    }
 
     public void ToggleCameraXOrbit(bool enable)
     {
@@ -303,7 +330,9 @@ public class PlayerMovement : StateMachine
         
         if(Physics.SphereCast(sphereOrigin, sphereRadius, Vector3.down, out var hitInfo, maxDistance, environmentLayer))
         {
-            return hitInfo.distance;
+            // // Make sure surface is flat
+            if(Vector3.SignedAngle(hitInfo.normal, Vector3.up, Vector3.right) <= cc.slopeLimit)
+                return hitInfo.distance;
         }
         return maxDistance;
         
