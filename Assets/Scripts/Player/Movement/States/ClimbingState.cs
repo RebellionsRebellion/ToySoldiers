@@ -360,7 +360,7 @@ public class ClimbingState : MovementState
         // If they jump while not hanging or can no longer climb
         if (
             (stateMachine.InputController.JumpDown && !CanHang(climbState)) || 
-             (CantClimb(climbState) && !didVault)
+             (CantClimb(climbState) && !didVault && climbTimer > Settings.ClimbingStartLockIntoPlace)
             )
         {
             // Trigger retry delay
@@ -388,7 +388,7 @@ public class ClimbingState : MovementState
         Transform playerTransform = stateMachine.PlayerTransform;
         Vector3 bottomOrigin = playerTransform.position + stateMachine.transform.up * 0.1f;
         Vector3 topOrigin = playerTransform.position + stateMachine.transform.up * (stateMachine.PlayerHeight - 0.1f);
-        Vector3 headOrigin = playerTransform.position + stateMachine.transform.up * (stateMachine.PlayerHeadHeight - 0.1f);
+        Vector3 headOrigin = playerTransform.position + stateMachine.transform.up * stateMachine.PlayerHeadHeight;
         Vector3 direction = playerTransform.forward;
         Vector3 sideDirection = playerTransform.right * stateMachine.PlayerRadius;
         // Create rays for each direction
@@ -446,25 +446,14 @@ public class ClimbingState : MovementState
             // Set the start data if they aren't currently climbing
             if (stateMachine.CurrentState != this)
             {
+                
                 Vector3 startPosition = hitInfo.point;
                 Vector3 startNormal = hitInfo.normal;
-                // Shift start position if the player cant climb down
-                // For situations when they jump up to a ledge
-                if (!climbDirections.HasFlag(ClimbDirections.Down))
-                {
-                    Vector3 upDirection = Vector3.Cross(startNormal, Vector3.right).normalized;
-                    startPosition += upDirection * 0.25f;
-                }
                 
                 climbStartData = new ClimbStartData(startPosition, startNormal, playerTransform.position);
-
-                // Draw ray at start hit point
-                Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.green, 1f);
             }
 
         }
-//        Debug.Log(climbDirections);
-        
         return climbDirections;
     }
     
