@@ -100,3 +100,7 @@ InitTestScene*.unity*
 
 *.blob
 ProjectSettings/ProjectVersion.txt
+ProjectSettings/ShaderGraphSettings.asset
+ProjectSettings/ProjectVersion.txt
+Packages/packages-lock.json
+.vsconfig
