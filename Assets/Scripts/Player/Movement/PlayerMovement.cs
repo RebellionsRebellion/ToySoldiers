@@ -290,9 +290,10 @@ public class PlayerMovement : StateMachine
         // Source: https://discussions.unity.com/t/character-controller-slide-down-slope/188130/2
         // Check if we are sliding
         var angle = Vector3.Angle(Vector3.up, hitNormal);
-        bool isSliding = (angle > hit.controller.slopeLimit && angle <= 90f);
+        bool isSliding = (angle > hit.controller.slopeLimit && angle < 89f);
         if (isSliding && !IsGrounded && currentVelocity.y <= 0f){
             {
+                print("slide");
                 var slopeRotation = Quaternion.FromToRotation(Vector3.up, hitNormal);
                 // Calculate speed based on rotation from up
                 float slopeSpeed = (angle-45) / 45f; // Normalize between 0 and 1 from 45 to 90 degrees
