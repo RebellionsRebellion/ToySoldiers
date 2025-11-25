@@ -3,5 +3,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "WeaponTypes", menuName = "ScriptableObjects/WeaponTypes")]
 public class WeaponTypesSO : ScriptableObject
 {
-    public WeaponSO[] WeaponTypes;
+    public WeaponDataSO[] WeaponTypes;
 }

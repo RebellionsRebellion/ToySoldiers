@@ -84,22 +84,19 @@ public class ClimbingState : MovementState
     }
 
     public override bool UseGravity => false;
+    public override bool UseRootMotion => true;
 
-    private Tween delayTween;
     private Tween hangToVaultDelay;
     private Tween staminaFadeTween;
     private bool didVault;
     private float climbTimer;
     private bool isHanging;
     private float currentStamina;
-    
-    public override bool CanEnter()
-    {
-        return !delayTween.isAlive;// && GetStaminaPercentage() > Settings.ClimbStartMinStamina;
-    }
 
     public override void Initialize()
     {
+        base.Initialize();
+        
         Settings.ClimbStaminaUI.alpha = 0.0f;
         
         currentStamina = Settings.MaxClimbStamina;
@@ -109,11 +106,18 @@ public class ClimbingState : MovementState
     public override void OnEnter()
     {
         base.OnEnter();
+        
+        // If no start data, climb condition hasnt properly been checked
+        if (!climbStartData.IsValid)
+        {
+            Debug.LogWarning("ClimbState entered without valid climb start data");
+            SwitchState(stateMachine.FallingState);
+            return;
+        }
 
         this.stateMachine.ToggleCameraXOrbit(true);
         
         stateMachine.PlayerAnimator.SetBool(IsClimbing, true);
-        stateMachine.PlayerAnimator.applyRootMotion = true;
         
         currentStamina = Settings.MaxClimbStamina;
         
@@ -215,7 +219,7 @@ public class ClimbingState : MovementState
             currentStamina += Settings.ClimbStaminaRegenRate * Time.deltaTime;
             
             // Can jump to vault over ledge
-            if (stateMachine.InputController.IsJumping && !hangToVaultDelay.isAlive)
+            if (stateMachine.InputController.JumpDown && !hangToVaultDelay.isAlive)
             {
                 VaultOverLedge();
             }
@@ -337,8 +341,12 @@ public class ClimbingState : MovementState
 
     public override void CheckTransitions()
     {
-        // If they stop holding climb button without vaulting
-        if ((!stateMachine.InputController.IsClimbing || CantClimb(GetClimbState())) && !didVault)
+        var climbState = GetClimbState();
+        // If they jump while not hanging or can no longer climb
+        if (
+            (stateMachine.InputController.JumpDown && !CanHang(climbState)) || 
+             (CantClimb(climbState) && !didVault)
+            )
         {
             // Trigger retry delay
             SetDelay(Settings.ClimbingRetryDelay);
@@ -356,22 +364,7 @@ public class ClimbingState : MovementState
             return;
         }
     }
-
-
-    private void SetDelay(float delay)
-    {
-        // Set delay to current or new delay, whichever is longer
-        if (delayTween.isAlive)
-        {
-            float remaining = delayTween.duration - delayTween.elapsedTime;
-            float newDelay = remaining > delay ? remaining : delay;
-            Tween.Delay(newDelay);
-        }
-        else
-        {
-            delayTween = Tween.Delay(delay);
-        }
-    }
+    
     
     private ClimbStartData climbStartData;
     
@@ -399,9 +392,9 @@ public class ClimbingState : MovementState
             if (angle < Settings.ClimbingAngleLimits.x || angle > Settings.ClimbingAngleLimits.y)
                 return climbDirections;
             
-            // Make sure input is pressed
-            if (!stateMachine.InputController.IsClimbing)
-                return climbDirections;
+            // // Make sure input is pressed
+            // if (!stateMachine.InputController.IsClimbing)
+            //     return climbDirections;
             
             // Assume can climb in all directions initially
             climbDirections = ClimbDirections.Up | ClimbDirections.Down | ClimbDirections.Left | ClimbDirections.Right;
@@ -448,13 +441,15 @@ public class ClimbingState : MovementState
         Right = 8
     }
     
-    public struct ClimbStartData
+    private struct ClimbStartData
     {
+        public bool IsValid;
         public RaycastHit RaycastHit;
         public Vector3 PlayerPosition;
         
         public ClimbStartData(RaycastHit rayHit, Vector3 playerPosition)
         {
+            this.IsValid = true;
             this.RaycastHit = rayHit;
             this.PlayerPosition = playerPosition;
         }

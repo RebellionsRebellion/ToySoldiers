@@ -71,7 +71,7 @@ namespace RIGPR.Editor {
         /// <summary>
         /// Adds the currently open scene to the builds included scenes list
         /// </summary>
-        [MenuItem("Build/Add Current Scene To Build")]
+        [MenuItem("Build/Add Current Scene To Build Path")]
         public static void AddCurrentSceneToBuildPath() {
             string currScenePath = SceneManager.GetActiveScene().path;
 
@@ -156,7 +156,7 @@ namespace RIGPR.Editor {
             PlayerSettings.bundleVersion = newVer;
             Debug.Log($"Updated base version to: {newVer}");
         }
-        
+
         /// <summary>
         /// This function builds the project
         /// It takes in various args to determine the version and targeted platform
@@ -187,28 +187,50 @@ namespace RIGPR.Editor {
                 if (args[i] == "-outputPath" && i + 1 < args.Length)
                     outputPath = args[i + 1];
             }
-            
+
             string platformSuffix = target switch {
                 BuildTarget.StandaloneWindows64 => "Windows",
                 BuildTarget.StandaloneLinux64 => "Linux",
-                BuildTarget.StandaloneOSX => "Mac",
+                BuildTarget.StandaloneOSX => "MacOS",
                 _ => "Unknown"
             };
-            
+
             string platformVersion = version;
             if (!platformVersion.Contains(platformSuffix))
                 platformVersion += $".{platformSuffix}";
             PlayerSettings.bundleVersion = platformVersion;
-            
+
             Debug.Log($"Building version: {platformVersion}");
-            
+
+            ScriptingImplementation backend = ScriptingImplementation.Mono2x;
+
+            for (int i = 0; i < args.Length; i++)
+                if (args[i] == "-scriptingBackend" && i + 1 < args.Length) {
+                    string b = args[i + 1].ToLower();
+
+                    if (b == "mono")
+                        backend = ScriptingImplementation.Mono2x;
+                    else if (b == "il2cpp")
+                        backend = ScriptingImplementation.IL2CPP;
+                    else
+                        Debug.LogError($"Unknown script backend: {b}. Defaulting to IL2CPP.");
+                }
+
+            if (target == BuildTarget.StandaloneWindows64 ||
+                target == BuildTarget.StandaloneLinux64 ||
+                target == BuildTarget.StandaloneOSX) {
+                PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, backend);
+                PlayerSettings.SetArchitecture(BuildTargetGroup.Standalone, 1); // 1 = x86_64
+                Debug.Log("Using IL2CPP backend for this build.");
+            }
+
             var buildPlayerOptions = new BuildPlayerOptions {
                 scenes = _scenes.ToArray(),
                 locationPathName = outputPath,
                 target = target,
                 options = BuildOptions.None
             };
-            
+
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             if (report.summary.result != BuildResult.Succeeded) {
                 Debug.LogError($"Build failed: {report.summary.result}");

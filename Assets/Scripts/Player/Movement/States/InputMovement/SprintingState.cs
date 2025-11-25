@@ -19,10 +19,6 @@ public class SprintingState : InputMoveState
     
     private new SprintingSettings Settings => stateMachine.SprintingSettings;
 
-    public override void Initialize()
-    {
-    }
-
     public override void OnEnter()
     {
         base.OnEnter();
@@ -31,11 +27,6 @@ public class SprintingState : InputMoveState
 
     public override void OnExit()
     {
-    }
-
-    public override bool CanEnter()
-    {
-        return true;
     }
     public override void Tick()
     {
