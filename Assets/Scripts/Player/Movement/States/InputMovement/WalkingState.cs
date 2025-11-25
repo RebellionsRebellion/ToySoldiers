@@ -22,10 +22,6 @@ public class WalkingState : InputMoveState
     {
     }
 
-    public override void Initialize()
-    {
-    }
-
     public override void OnEnter()
     {
         base.OnEnter();
@@ -51,12 +47,6 @@ public class WalkingState : InputMoveState
         if(stateMachine.InputController.IsCrouching)
             SwitchState(stateMachine.CrouchingState);
     }
-
-
-
-    public override bool CanEnter()
-    {
-        return true;
-    }
+    
 
 }

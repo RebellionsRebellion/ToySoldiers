@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSO
   ClassName: assault_rifle
   DisplayName: Assault Rifle
-  FireRateRPM: 100
+  FireRateRPM: 400
   Damage: 10
   FireModes:
   - Full
@@ -29,6 +29,3 @@ MonoBehaviour:
   ShotSpread: 0
   IsPhysicsBased: 0
   WeaponPrefab: {fileID: 0}
-  CurrentAmmoInMag: 0
-  CurrentFireMode: 
-  FirePoint: {fileID: 0}

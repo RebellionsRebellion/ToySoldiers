@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "Controls",
     "maps": [
         {
@@ -36,15 +37,6 @@
                     "name": "Sprint",
                     "type": "Value",
                     "id": "76b962a9-4b6e-449b-95d6-c7894972b66e",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Climb",
-                    "type": "Value",
-                    "id": "b85da9ff-84c7-40db-8555-9089e877d4f6",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -173,28 +165,6 @@
                 },
                 {
                     "name": "",
-                    "id": "5438a616-ae5a-4cc2-94b5-18cf819571e5",
-                    "path": "<Keyboard>/c",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard+Mouse",
-                    "action": "Climb",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "9679ef95-eec9-4b47-b87c-e1d47c26d909",
-                    "path": "<Gamepad>/buttonWest",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Climb",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "a3f92f1f-bc0a-4fa7-87a1-0509c3c42068",
                     "path": "<Pointer>/delta",
                     "interactions": "",
@@ -218,7 +188,7 @@
                 {
                     "name": "",
                     "id": "777234ef-3653-47a3-9b3d-2afe99bc0da4",
-                    "path": "<Mouse>/forwardButton",
+                    "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard+Mouse",
@@ -234,6 +204,107 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Combat",
+            "id": "bd049e4a-488e-4919-aee9-47872c2790fd",
+            "actions": [
+                {
+                    "name": "Shoot",
+                    "type": "Value",
+                    "id": "e1272415-bfae-4fe2-9230-2fb9c541b918",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Aim",
+                    "type": "Value",
+                    "id": "36dae624-4f09-47c6-967c-c270369308ec",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "1e5c0bbf-3448-4a72-8a15-ce5020bc31c3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ee089bd3-c71c-4c24-a87f-5afe2719f352",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard+Mouse",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6ce50897-4d40-4d16-a102-236a9850cf84",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b10bb4fe-fc32-4952-88e1-87e10ad544cb",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard+Mouse",
+                    "action": "Aim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "745912db-21b1-4189-bede-df571ca80511",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Aim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0a47438f-872f-4068-98c6-ed6af7e49e38",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard+Mouse",
+                    "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b7e23a57-32a2-4fe3-b335-1ac5326932d7",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
