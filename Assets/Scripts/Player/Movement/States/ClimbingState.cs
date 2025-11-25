@@ -5,6 +5,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using UnityEngine.Windows.WebCam;
 
 [Serializable]
 public class ClimbingSettings : StateSettings
@@ -39,15 +40,21 @@ public class ClimbingSettings : StateSettings
     public float ClimbVaultDistance => climbVaultDistance;
     [SerializeField] private float climbVaultDuration = 1f;
     public float ClimbVaultDuration => climbVaultDuration;
-    [Tooltip("Brief delay after hanging before being able to vault")]
-    [SerializeField] private float climbVaultDelayAfterHang = 0.4f;
-    public float ClimbVaultDelayAfterHang => climbVaultDelayAfterHang;
     [Tooltip("Control vertical speed of vaulting animation")]
     [SerializeField] private AnimationCurve climbVaultEasingVertical;
     public AnimationCurve ClimbVaultEasingVertical => climbVaultEasingVertical;
     [Tooltip("Control horizontal speed of vaulting animation")]
     [SerializeField] private AnimationCurve climbVaultEasingHorizontal;
     public AnimationCurve ClimbVaultEasingHorizontal => climbVaultEasingHorizontal;
+    [Tooltip("Brief delay before being able to stop hanging")]
+    [SerializeField] private float unhangDelay = 0.4f;
+    public float UnhangDelay => unhangDelay;
+    [Tooltip("Delay before player can rehang after falling")]
+    [SerializeField] private float rehangDelay = 0.2f;
+    public float RehangDelay => rehangDelay;
+    [Tooltip("Distance from the top of the wall at which entering climb will automatically hang")]
+    [SerializeField] private float autoTriggerHangDistance = 1f;
+    public float AutoTriggerHangDistance => autoTriggerHangDistance;
     
     [Header("Climbing Stamina")]
     [SerializeField] private CanvasGroup climbStaminaUI;
@@ -86,7 +93,8 @@ public class ClimbingState : MovementState
     public override bool UseGravity => false;
     public override bool UseRootMotion => true;
 
-    private Tween hangToVaultDelay;
+    private Tween unhangDelayTween;
+    private Tween rehangDelayTween;
     private Tween staminaFadeTween;
     private bool didVault;
     private float climbTimer;
@@ -123,6 +131,19 @@ public class ClimbingState : MovementState
         currentStamina = Settings.MaxClimbStamina;
         
         ToggleStaminaBar(true);
+        
+        // Check if they should start hanging
+        Vector3 topPosition = Vector3.zero;
+        if(GetDistanceToTop(ref topPosition) < Settings.AutoTriggerHangDistance)
+        {
+            StartHanging();
+            
+            // Shift start position to same Y level as top
+            // Move down slightly to account for head height
+            Vector3 startPos = climbStartData.StartPosition;
+            startPos.y = topPosition.y - (stateMachine.PlayerHeight - (stateMachine.PlayerHeadHeight+ 0.11f));
+            climbStartData.StartPosition = startPos;
+        }
 
         climbTimer = 0.0f;
         didVault = false;
@@ -174,6 +195,12 @@ public class ClimbingState : MovementState
             if (sideInput > 0f && !climbState.HasFlag(ClimbDirections.Right))
                 sideInput = 0f;
             
+            // If moving down while hanging, stop hanging
+            if (isHanging && upInput < 0f && !unhangDelayTween.isAlive)
+            {
+                StopHanging();
+            }
+            
             // If moving sideways but not up, disable root motion
             if (Mathf.Abs(sideInput) > 0f && Mathf.Abs(upInput) <= 0f)
             {
@@ -211,7 +238,7 @@ public class ClimbingState : MovementState
         }
         
         // If they cant climb up
-        if (CanHang(climbState))
+        if (CanHang(climbState) && !rehangDelayTween.isAlive)
         {
             // If not currently hanging, start hanging
             if(!isHanging)
@@ -221,25 +248,24 @@ public class ClimbingState : MovementState
             currentStamina += Settings.ClimbStaminaRegenRate * Time.deltaTime;
             
             // Can jump to vault over ledge
-            if (stateMachine.InputController.JumpDown && !hangToVaultDelay.isAlive)
+            if (stateMachine.InputController.JumpDown && !unhangDelayTween.isAlive)
             {
                 VaultOverLedge();
             }
         }
-        else if(isHanging)
+        else if(isHanging && !unhangDelayTween.isAlive)
         {
-            isHanging = false;
-            stateMachine.PlayerAnimator.SetBool(IsHanging, false);
+            StopHanging();
         }
         
         // Lock player to wall at start
         if (climbTimer < Settings.ClimbingStartLockIntoPlace)
         {
             float lockT = climbTimer / Settings.ClimbingStartLockIntoPlace;
-            Vector3 direction = -climbStartData.startNormal;
+            Vector3 direction = -climbStartData.StartNormal;
 
             // Lerp in direction
-            Vector3 targetPosition = climbStartData.startPosition - direction * Settings.ClimbDistanceFromWall;
+            Vector3 targetPosition = climbStartData.StartPosition - direction * Settings.ClimbDistanceFromWall;
             // Since the start position is based on the players head, shift target position down to feet
             targetPosition -= climbStartData.UpDirection * stateMachine.PlayerHeadHeight;
             
@@ -289,7 +315,16 @@ public class ClimbingState : MovementState
         
         stateMachine.PlayerAnimator.SetBool(IsHanging, true);
         
-        hangToVaultDelay = Tween.Delay(Settings.ClimbVaultDelayAfterHang);
+        unhangDelayTween = Tween.Delay(Settings.UnhangDelay);
+    }
+
+    private void StopHanging()
+    {
+        isHanging = false;
+        
+        stateMachine.PlayerAnimator.SetBool(IsHanging, false);
+        
+        rehangDelayTween = Tween.Delay(Settings.RehangDelay);
     }
 
     private void VaultOverLedge()
@@ -378,6 +413,25 @@ public class ClimbingState : MovementState
             SwitchState(stateMachine.FallingState);
             return;
         }
+    }
+
+    private float GetDistanceToTop(ref Vector3 topPosition)
+    {
+        float maxDistance = 100;
+        
+        Transform playerTransform = stateMachine.PlayerTransform;
+        Vector3 headOrigin = playerTransform.position + stateMachine.transform.up * stateMachine.PlayerHeadHeight;
+        Vector3 wallPosition = headOrigin + (playerTransform.forward * (Settings.ClimbRange+0.1f));
+
+        Ray distanceRay = new Ray(wallPosition + Vector3.up * maxDistance, -climbStartData.UpDirection);
+        if (Physics.Raycast(distanceRay, out var hitInfo, maxDistance, Settings.ClimbableLayer))
+        {
+            Debug.Log("hit top at distance: " + Vector3.Distance(headOrigin, hitInfo.point));
+            topPosition = hitInfo.point;
+            return Vector3.Distance(headOrigin, hitInfo.point);
+        }
+
+        return maxDistance;
     }
     
     
@@ -483,8 +537,8 @@ public class ClimbingState : MovementState
     private struct ClimbStartData
     {
         public bool IsValid;
-        public Vector3 startPosition;
-        public Vector3 startNormal;
+        public Vector3 StartPosition;
+        public Vector3 StartNormal;
         public Vector3 PlayerPosition;
         public Vector3 UpDirection;
         
@@ -492,9 +546,9 @@ public class ClimbingState : MovementState
         public ClimbStartData(Vector3 startPosition, Vector3 startNormal, Vector3 playerPosition)
         {
             this.IsValid = true;
-            this.startPosition = startPosition;
-            this.startNormal = startNormal;
-            this.PlayerPosition = playerPosition;
+            StartPosition = startPosition;
+            StartNormal = startNormal;
+            PlayerPosition = playerPosition;
             Vector3 rightDirection = Vector3.Cross(Vector3.up, startNormal).normalized;
             UpDirection = Vector3.Cross(startNormal, rightDirection).normalized;
         }
