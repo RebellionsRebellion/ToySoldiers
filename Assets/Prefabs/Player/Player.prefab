@@ -380,9 +380,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 119
   firePoint: {fileID: 1283563445095331218}
-  cube: {fileID: 0}
   tracerPrefab: {fileID: 1779594140215910652, guid: f4d1a7441a64b8543bc8ae92e32c70f6, type: 3}
   tracerSpeed: 200
+  physicsProjectilePrefab: {fileID: 1779594140215910652, guid: 99236bb3e982031448498db290581e9f, type: 3}
 --- !u!1 &7669584702012679197
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,18 +18,17 @@ public class WeaponsSystem : MonoBehaviour
     [Tooltip("The point that the gun actually shoots from, will be obtained dynamically in the future")]
     [SerializeField] private Transform firePoint;
     
-    
-    [Tooltip("Test cube to visualise spread")]
-    public Transform cube;                          // test cube to visualise spread
-    private Crosshair crosshair;                    // Crosshair 
-
-
-    [HideInInspector] public Weapon currentWeapon;
+    // internal references
     private PlayerInventory playerInventory => PlayerInventory.Instance;
+    [HideInInspector] public Weapon currentWeapon;
+    private Crosshair crosshair;
     
     // tracer
-    public GameObject tracerPrefab;   // assign in Inspector
-    public float tracerSpeed = 200f;  // only for moving tracers (optional)
+    [SerializeField] private GameObject tracerPrefab;   // assign in Inspector
+    [SerializeField] private float tracerSpeed = 200f;  // only for moving tracers (optional)
+    
+    // physics projectile
+    [SerializeField] private GameObject physicsProjectilePrefab;
 
     // timing values
     private float lastShotTime = 0;                 // time in seconds since the start of the application when the last shot happened
@@ -154,7 +153,7 @@ public class WeaponsSystem : MonoBehaviour
         // get camera forward aim direction
         Vector3 camForward = playerCamera.transform.forward;
         
-        Vector3 shootDir = camForward;
+        Vector3 shootDir;
 
         // apply random spread to the shot direction
         if (!isMultiShot)
@@ -191,11 +190,30 @@ public class WeaponsSystem : MonoBehaviour
 
     private void DoPhysicsShoot(bool isMultiShot = false, float multiRotation = 0f)
     {
-        // do the actual physics based shoot for rockets etc
+        // do the actual physics based shoot for rockets, arrows etc
+        Vector3 camForward = playerCamera.transform.forward;
+        Vector3 shootDir;
 
-        // shoot ray from camera. Set initial direction of projectile to point at that
+        // multi shot support
+        if (isMultiShot)
+        {
+            Debug.Log("Multi shot rotation");
+            shootDir = GetShotgunRotation(camForward, multiRotation);
+        }
+        else
+        {
+            shootDir = camForward;
+        }
         
-        // after that use the projectile physics i did for my ballistic system where visually it looks like its effected by gravity etc but its just all raycasts
+        // instantiate and setup the physics projectile
+        GameObject physicsProjectile = Instantiate(physicsProjectilePrefab, firePoint.position, firePoint.rotation);
+        PhysicsBulletMovement movementScript = physicsProjectile.GetComponent<PhysicsBulletMovement>();
+        
+        movementScript.InitialDirection = shootDir;
+        movementScript.InitialVelocity = currentWeapon.WeaponData.InitialVelocityMS;
+        movementScript.Damage = currentWeapon.WeaponData.Damage;
+        movementScript.MassKG = currentWeapon.WeaponData.MassKG;
+        movementScript.Shootable = canShoot;
     }
 
     private float GetSpreadRotation()

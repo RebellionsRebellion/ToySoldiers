@@ -43,6 +43,14 @@ public class WeaponDataSO : ScriptableObject
     public float ShotSpread;
     [Tooltip("If true the projectile will use rigidbody like physics")]
     public bool IsPhysicsBased;
+    [Tooltip("Initial velocity of physics projectiles in meters per second")]
+    public float InitialVelocityMS;
+    [Tooltip("Mass of physics projectiles in kilograms")]
+    public float MassKG;
+    
+    [Header("Attachment settings")]
+    [Tooltip("What attachments the gun can take")]
+    public string[] Attachments;
 
     [Header("Weapon prefab")]
     [Tooltip("A reference to the weapon prefab with its fire point child")]
@@ -65,5 +73,8 @@ public class WeaponDataSO : ScriptableObject
         ShotSpread = other.ShotSpread;
         IsPhysicsBased = other.IsPhysicsBased;
         WeaponPrefab = other.WeaponPrefab;
+        InitialVelocityMS = other.InitialVelocityMS;
+        MassKG = other.MassKG;
+        Attachments = other.Attachments;
     }
 }

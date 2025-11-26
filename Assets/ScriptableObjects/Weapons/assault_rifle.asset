@@ -15,7 +15,7 @@ MonoBehaviour:
   ClassName: assault_rifle
   DisplayName: Assault Rifle
   FireRateRPM: 100
-  Damage: 10
+  Damage: 35
   FireModes:
   - Full
   - Semi
@@ -23,9 +23,14 @@ MonoBehaviour:
   SpecialAmmo: 0
   ReloadTime: 3.2
   BaseSpread: 0
-  HalfSpread: 1.5
+  HalfSpread: 2.5
   MaxSpread: 3
   ShotQuantity: 1
   ShotSpread: 0
   IsPhysicsBased: 0
+  InitialVelocityMS: 0
+  MassKG: 0
+  Attachments:
+  - Silencer
+  - ' Laser'
   WeaponPrefab: {fileID: 0}
