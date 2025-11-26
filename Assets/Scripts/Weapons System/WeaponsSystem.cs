@@ -101,18 +101,24 @@ public class WeaponsSystem : MonoBehaviour
         Debug.Log("Firing weapon: " + currentWeapon.WeaponData.DisplayName);
         
         // shoot it
-        if(currentWeapon.WeaponData.IsPhysicsBased)
+        if (currentWeapon.WeaponData.ShotQuantity > 1)
         {
-            DoPhysicsShoot();
+            DoMultiShoot(currentWeapon.WeaponData.IsPhysicsBased);
         }
         else
         {
-            DoRaycastShoot();
+            if(currentWeapon.WeaponData.IsPhysicsBased)
+            {
+                DoPhysicsShoot();
+            }
+            else
+            {
+                DoRaycastShoot();
+            }
         }
-
+        
         // do the spread calculations
         lastShotTime = Time.time;
-
         
         currentWeapon.Fire();
     }
@@ -125,18 +131,47 @@ public class WeaponsSystem : MonoBehaviour
         currentWeapon.Reload(playerInventory);
     }
 
-    private void DoRaycastShoot()
+    private void DoMultiShoot(bool isPhysicsBased = false)
+    {
+        for (int i = 0; i < currentWeapon.WeaponData.ShotQuantity; i++)
+        {
+            // calculate shot offset rotation
+            float max = currentWeapon.WeaponData.ShotSpread;
+            
+            if (isPhysicsBased)
+            {
+                DoPhysicsShoot(true, Random.Range(-max, max));
+            }
+            else
+            {
+                DoRaycastShoot(true, Random.Range(-max, max));
+            }
+        }
+    }
+
+    private void DoRaycastShoot(bool isMultiShot = false, float multiRotation = 0f)
     {
         // get camera forward aim direction
         Vector3 camForward = playerCamera.transform.forward;
+        
+        Vector3 shootDir = camForward;
 
         // apply random spread to the shot direction
-        Quaternion spreadRot = Quaternion.Euler(
-            GetSpreadRotation(),
-            GetSpreadRotation(),
-            GetSpreadRotation()
-        );
-        Vector3 shootDir = spreadRot * camForward;
+        if (!isMultiShot)
+        {
+            Quaternion spreadRot = Quaternion.Euler(
+                GetSpreadRotation(),
+                GetSpreadRotation(),
+                GetSpreadRotation()
+            );
+
+            shootDir = spreadRot * camForward;
+        }
+        else
+        {
+            Debug.Log("Multi shot rotation");
+            shootDir = GetShotgunRotation(camForward, multiRotation);
+        }
 
         // visualize the shot direction from the fire point
         Debug.DrawRay(firePoint.position, shootDir * 100f, Color.red, 10f);
@@ -154,7 +189,7 @@ public class WeaponsSystem : MonoBehaviour
         SpawnTracer(firePoint.position, firePoint.position + shootDir * 100f);
     }
 
-    private void DoPhysicsShoot()
+    private void DoPhysicsShoot(bool isMultiShot = false, float multiRotation = 0f)
     {
         // do the actual physics based shoot for rockets etc
 
@@ -167,6 +202,19 @@ public class WeaponsSystem : MonoBehaviour
     {
         float max = currentWeapon.WeaponSpread.CurrentSpreadAmount;
         return Random.Range(-max, max);
+    }
+    
+    private Vector3 GetShotgunRotation(Vector3 forward, float angle)
+    {
+        // this makes a uniform cone based on the angle we give and then randomises a location in that as the offset
+        float angleRad = angle * Mathf.Deg2Rad;
+
+        Vector3 random = Random.onUnitSphere;
+        Vector3 axis = Vector3.Cross(forward, random).normalized;
+
+        float theta = Random.Range(0f, angleRad);
+
+        return Quaternion.AngleAxis(theta * Mathf.Rad2Deg, axis) * forward;
     }
     
     private void SpawnTracer(Vector3 start, Vector3 end)
