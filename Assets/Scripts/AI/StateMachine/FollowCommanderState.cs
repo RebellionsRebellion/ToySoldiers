@@ -13,6 +13,7 @@ public class FollowCommanderState : AIState
     {
         this.commander = commander;
         this.offset = offset;
+        agent.isStopped = false;
     }
 
     // sets AI to follow the offset position from the commander

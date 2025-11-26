@@ -103,5 +103,61 @@ public class Weapon
         }
     }
     
+    public void EnemyReload(AIInventory aiInventory)
+    {
+        // reset spread on reload
+        WeaponSpread.ResetSpread();
+
+        // determine which ammo to use
+        int availableAmmo;
+
+        if (WeaponData.SpecialAmmo)
+        {
+            availableAmmo = aiInventory.GetSpecialAmmoCount();
+        }
+        else
+        {
+            availableAmmo = aiInventory.GetNormalAmmoCount();
+        }
+
+        if (availableAmmo <= 0)
+        {
+            // no ammo left at all! play a sound or something
+            Debug.Log("No ammo left to reload!");
+            return;
+        }
+
+        // actually give/take the ammo
+        if (availableAmmo >= WeaponData.MagSize)
+        {
+            CurrentAmmoInMag = WeaponData.MagSize;
+
+            if (WeaponData.SpecialAmmo)
+            {
+                aiInventory.AdjustSpecialAmmoCount(-WeaponData.MagSize);;
+            }
+            else
+            {
+                aiInventory.AdjustNormalAmmoCount(-WeaponData.MagSize);
+            }
+            Debug.Log("Reloaded full mag");
+        }
+        else
+        {
+            CurrentAmmoInMag = availableAmmo;
+
+            if (WeaponData.SpecialAmmo)
+            {
+                aiInventory.SetSpecialAmmoCount(0);
+            }
+            else
+            {
+                aiInventory.SetNormalAmmoCount(0);
+            }
+
+            Debug.Log("Reloaded partial mag");
+        }
+    }
+    
 
 }
