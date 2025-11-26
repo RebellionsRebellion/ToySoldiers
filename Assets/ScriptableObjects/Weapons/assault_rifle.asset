@@ -23,7 +23,7 @@ MonoBehaviour:
   SpecialAmmo: 0
   ReloadTime: 3.2
   BaseSpread: 0
-  HalfSpread: 1.5
+  HalfSpread: 2.5
   MaxSpread: 3
   ShotQuantity: 1
   ShotSpread: 0

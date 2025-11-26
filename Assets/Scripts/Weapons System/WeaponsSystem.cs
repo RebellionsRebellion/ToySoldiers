@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class WeaponsSystem : MonoBehaviour
 {
@@ -99,15 +100,14 @@ public class WeaponsSystem : MonoBehaviour
 
         Debug.Log("Firing weapon: " + currentWeapon.WeaponData.DisplayName);
         
-        // do the actual shooting here
+        // shoot it
         if(currentWeapon.WeaponData.IsPhysicsBased)
         {
             DoPhysicsShoot();
         }
         else
         {
-            Vector3 endPos = DoRaycastShoot();
-            SpawnTracer(firePoint.position, endPos);
+            DoRaycastShoot();
         }
 
         // do the spread calculations
@@ -117,7 +117,7 @@ public class WeaponsSystem : MonoBehaviour
         currentWeapon.Fire();
     }
 
-    public void Reload()
+    private void Reload()
     {
         accumulatedShootingTime = 0f;
         lastReloadTime = Time.time;
@@ -125,25 +125,34 @@ public class WeaponsSystem : MonoBehaviour
         currentWeapon.Reload(playerInventory);
     }
 
-    private Vector3 DoRaycastShoot()
+    private void DoRaycastShoot()
     {
-        Ray cameraRay = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        // get camera forward aim direction
+        Vector3 camForward = playerCamera.transform.forward;
 
-        // debug lines
-        Debug.DrawRay(firePoint.position, cameraRay.direction * 100f, Color.red, 10f);
+        // apply random spread to the shot direction
+        Quaternion spreadRot = Quaternion.Euler(
+            GetSpreadRotation(),
+            GetSpreadRotation(),
+            GetSpreadRotation()
+        );
+        Vector3 shootDir = spreadRot * camForward;
 
-        // raycast from gun along shoot direction
+        // visualize the shot direction from the fire point
+        Debug.DrawRay(firePoint.position, shootDir * 100f, Color.red, 10f);
+
+        // raycast from gun along the spread direction
         RaycastHit hit;
-        if (Physics.Raycast(firePoint.position, cameraRay.direction, out hit, Mathf.Infinity, canShoot))
+        if (Physics.Raycast(firePoint.position, shootDir, out hit, Mathf.Infinity, canShoot))
         {
+            // apply damage if we hit an enemy
             if (hit.collider.CompareTag("Enemy"))
                 hit.collider.GetComponent<AIController>().TakeDamage(999f);
         }
 
-        return firePoint.position + cameraRay.direction * 100f; // 100 units forward
+        // spawn tracer
+        SpawnTracer(firePoint.position, firePoint.position + shootDir * 100f);
     }
-
-
 
     private void DoPhysicsShoot()
     {
@@ -152,6 +161,12 @@ public class WeaponsSystem : MonoBehaviour
         // shoot ray from camera. Set initial direction of projectile to point at that
         
         // after that use the projectile physics i did for my ballistic system where visually it looks like its effected by gravity etc but its just all raycasts
+    }
+
+    private float GetSpreadRotation()
+    {
+        float max = currentWeapon.WeaponSpread.CurrentSpreadAmount;
+        return Random.Range(-max, max);
     }
     
     private void SpawnTracer(Vector3 start, Vector3 end)
