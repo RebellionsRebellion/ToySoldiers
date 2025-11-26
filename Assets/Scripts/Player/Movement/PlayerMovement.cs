@@ -22,8 +22,13 @@ public class PlayerMovement : StateMachine
     public Camera PlayerCamera => playerCamera;
     [SerializeField] private Animator playerAnimator;
     public Animator PlayerAnimator => playerAnimator;
+    [SerializeField] private Transform thirdPersonTracker;
+    public Transform ThirdPersonTracker => thirdPersonTracker;
+    [SerializeField] private CinemachineCamera thirdPersonCamera;
+    public CinemachineCamera ThirdPersonCamera => thirdPersonCamera;
+    [SerializeField] private CinemachineCamera climbingCamera;
+    public CinemachineCamera ClimbingCamera => climbingCamera;
     [SerializeField] private CinemachineInputAxisController cinemachineInputAxisController;
-    [SerializeField] private CinemachineOrbitalFollow cinemachineOrbitalFollow;
 
     [Header("Attributes")] 
     [Tooltip("Height of the player character, used in things like climbing checks")]
@@ -244,14 +249,28 @@ public class PlayerMovement : StateMachine
 
     private void FrameLook()
     {
-        Vector3 input = inputController.FrameLook;
+        Vector2 input = inputController.FrameLook;
         
-        Vector3 finalInput = input * (lookSensitivity * Time.deltaTime);
+        Vector2 finalInput = input * (lookSensitivity * Time.deltaTime);
         
         // Rotate player Y axis
         transform.Rotate(Vector3.up, finalInput.x);
+
+        // Rotate third person tracker
+        thirdPersonTracker.transform.rotation *= Quaternion.AngleAxis(finalInput.y, Vector3.right);
+        // Clamp third person X axis
+        Vector3 trackerEuler = thirdPersonTracker.localEulerAngles;
+        trackerEuler.z = 0;
+        
+        float angle = trackerEuler.x;
+        if (angle is > 180f and < 340f) angle = 340f;
+        else if (angle is < 180f and > 40f) angle = 40f;
+        trackerEuler.x = angle;
+        
+        thirdPersonTracker.localEulerAngles = trackerEuler;
         
     }
+
     public void ToggleCameraXOrbit(bool enable)
     {
         // Toggle Cinemachine X axis
@@ -262,16 +281,6 @@ public class PlayerMovement : StateMachine
                 controller.Enabled = enable;
                 // Toggle player from rotating with camera
                 canRotatePlayer = !enable;
-                if (!enable)
-                {
-                    cinemachineOrbitalFollow.HorizontalAxis.TriggerRecentering();
-                    cinemachineOrbitalFollow.HorizontalAxis.Recentering = originalCameraRecentering;
-                }
-                else
-                {
-                    originalCameraRecentering = cinemachineOrbitalFollow.HorizontalAxis.Recentering;
-                    cinemachineOrbitalFollow.HorizontalAxis.Recentering = climbingSettings.ClimbCameraRecentering;
-                }
                 break;
             }
         }
