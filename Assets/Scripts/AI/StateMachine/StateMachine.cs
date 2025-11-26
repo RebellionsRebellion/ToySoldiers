@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,11 +13,13 @@ public class AIStateMachine : MonoBehaviour
     public Transform commander;
     public Vector2 formationOffset;
     [HideInInspector] public int currentWaypoint; 
+    [HideInInspector] public AIVision vision;
 
     // Sets starting states for AI 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        vision = GetComponent<AIVision>();
         if (waypoints != null && waypoints.Count > 0)
         {
             ChangeState(new PatrolState(this, agent, waypoints, currentWaypoint));
@@ -30,6 +33,29 @@ public class AIStateMachine : MonoBehaviour
     void Update()
     {
         currentState?.Execute();
+        // if player enters vision collider, switch to attack state
+        if (vision.canSeePlayer)
+        {
+            if (!(currentState is AttackState))
+            {
+                ChangeState(new AttackState(this, agent, vision.player));
+            }
+        }
+        // if player leaves vision collider, switch to Patrol State if commander, otherwise follow commander state
+        else
+        {
+            if (currentState is AttackState)
+            {
+                if (waypoints != null && waypoints.Count > 0)
+                {
+                    ChangeState(new PatrolState(this, agent, waypoints, currentWaypoint));
+                }
+                else if (commander != null)
+                {
+                    ChangeState(new FollowCommanderState(this, agent, commander, formationOffset));
+                }
+            }
+        }
     }
 
     // function to change state
@@ -42,32 +68,7 @@ public class AIStateMachine : MonoBehaviour
         }
         currentState = newState;
     }
-
-    // if player enters vision collider, switch to attack state
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Player") && !(currentState is AttackState))
-        {
-            ChangeState(new AttackState(this, agent, other.transform));
-        }
-    }
-
-    // if player leaves vision collider, switch to Patrol State if commander, otherwise follow commander state
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player") && currentState is AttackState)
-        {
-            if (waypoints != null && waypoints.Count > 0)
-            {
-                ChangeState(new PatrolState(this, agent, waypoints, currentWaypoint));
-            }
-            else if (commander != null)
-            {
-                ChangeState(new FollowCommanderState(this, agent, commander, formationOffset));
-            }
-        }
-    }
-
+    
     // When AI dies, it changes state and if it was a commander a new one is set, or if just a follower then it is removed from commanders list
     public void Die()
     {
