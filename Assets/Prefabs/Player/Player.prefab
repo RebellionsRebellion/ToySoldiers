@@ -65,6 +65,7 @@ MonoBehaviour:
   playerRadius: 0.25
   playerHeadNormalizedHeight: 0.8
   minGroundDistance: 0.15
+  slopeSlideSpeed: 6
   environmentLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -127,7 +128,6 @@ MonoBehaviour:
     climbSprintSpeedMultiplier: 2
     climbVaultDistance: 0.5
     climbVaultDuration: 1
-    climbVaultDelayAfterHang: 0.4
     climbVaultEasingVertical:
       serializedVersion: 2
       m_Curve:
@@ -176,6 +176,9 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+    unhangDelay: 0.4
+    rehangDelay: 0.2
+    autoTriggerHangDistance: 1.66
     climbStaminaUI: {fileID: 5515616672219483051}
     climbStaminaBar: {fileID: 10641581326834246}
     maxClimbStamina: 7

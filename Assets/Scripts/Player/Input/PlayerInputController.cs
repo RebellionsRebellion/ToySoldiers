@@ -45,6 +45,11 @@ public class PlayerInputController : MonoBehaviour
     {
         FrameMove = inputValue.Get<Vector2>();
     }
+    public bool IsMovingUp => FrameMove.y > 0;
+    public bool IsMovingDown => FrameMove.y < 0;
+    public bool IsMovingLeft => FrameMove.x < 0;
+    public bool IsMovingRight => FrameMove.x > 0;
+    
     
     private void OnJump(InputValue inputValue)
     {

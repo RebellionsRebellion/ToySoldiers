@@ -1,6 +1,7 @@
 using System;
 using PrimeTween;
 using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -267,6 +268,14 @@ public class PlayerMovement : StateMachine
         
         // Rotate player Y axis
         transform.Rotate(Vector3.up, finalInput.x);
+        
+        // If X axis is not zero, slerp back to 0
+        if (transform.localEulerAngles.x != 0f)
+        {
+            Quaternion startRotation = transform.localRotation;
+            Quaternion targetRotation = Quaternion.Euler(0f, transform.localEulerAngles.y, 0f);
+            transform.localRotation = Quaternion.Slerp(startRotation, targetRotation, 0.2f);
+        }
 
         // Rotate third person tracker
         thirdPersonTracker.transform.rotation *= Quaternion.AngleAxis(-finalInput.y, Vector3.right);
@@ -290,7 +299,7 @@ public class PlayerMovement : StateMachine
         // Source: https://discussions.unity.com/t/character-controller-slide-down-slope/188130/2
         // Check if we are sliding
         var angle = Vector3.Angle(Vector3.up, hitNormal);
-        bool isSliding = (angle > hit.controller.slopeLimit && angle < 89f);
+        bool isSliding = (angle > hit.controller.slopeLimit && angle < 85f);
         if (isSliding && !IsGrounded && currentVelocity.y <= 0f){
             {
                 print("slide");
