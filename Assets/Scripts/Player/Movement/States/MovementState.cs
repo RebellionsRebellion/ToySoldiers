@@ -14,6 +14,7 @@ public abstract class MovementState : State, IMovementState
     public virtual bool UseGravity => true;
     public virtual bool UseRigidbody => false;
     public virtual bool UseRootMotion => false;
+    public virtual bool UseMouseRotatePlayer => true;
 
     public override void OnEnter()
     {
@@ -33,4 +34,5 @@ public interface IMovementState
     public bool UseGravity { get; }
     public bool UseRigidbody { get; }
     public bool UseRootMotion { get; }
+    public bool UseMouseRotatePlayer { get; }
 }

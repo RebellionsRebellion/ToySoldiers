@@ -99,6 +99,7 @@ public class ClimbingState : MovementState
 
     public override bool UseGravity => false;
     public override bool UseRootMotion => true;
+    public override bool UseMouseRotatePlayer => false;
 
     private Tween unhangDelayTween;
     private Tween rehangDelayTween;
@@ -132,8 +133,7 @@ public class ClimbingState : MovementState
             return;
         }
 
-        stateMachine.ToggleCameraXOrbit(true);
-        stateMachine.ClimbingCamera.Priority = 100;
+        stateMachine.PlayerCamera.ChangeCamera(PlayerCamera.CameraType.Climbing);
         
         stateMachine.PlayerAnimator.SetBool(IsClimbing, true);
         
@@ -160,7 +160,6 @@ public class ClimbingState : MovementState
 
     public override void OnExit()
     {
-        stateMachine.ToggleCameraXOrbit(false);
         if (!isVaulting)
             stateMachine.SetVelocity(Vector3.zero);
         
@@ -381,7 +380,7 @@ public class ClimbingState : MovementState
         isVaulting = true;
 
         // Reset camera
-        stateMachine.ClimbingCamera.Priority = 0;
+        stateMachine.PlayerCamera.ChangeCamera(PlayerCamera.CameraType.Main);
     }
 
     private IEnumerator VaultingOverLedge(Vector3 targetPosition)

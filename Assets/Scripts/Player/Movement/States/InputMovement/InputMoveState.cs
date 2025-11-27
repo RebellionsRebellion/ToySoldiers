@@ -38,11 +38,11 @@ public abstract class InputMoveState : MovementState
         Vector3 input = stateMachine.InputController.FrameMove;
         
         // Calculate movement direction relative to camera
-        Vector3 cameraForward = stateMachine.PlayerCamera.transform.forward;
+        Vector3 cameraForward = stateMachine.PlayerCamera.CameraTransform.forward;
         cameraForward.y = 0;
         cameraForward.Normalize();
         
-        Vector3 cameraRight = stateMachine.PlayerCamera.transform.right;
+        Vector3 cameraRight = stateMachine.PlayerCamera.CameraTransform.transform.right;
         cameraRight.y = 0;
         cameraRight.Normalize();
         

@@ -3,6 +3,7 @@ using PrimeTween;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 // Used https://github.com/nskoczylas/FSM-Movement for reference and inspiration
@@ -19,17 +20,13 @@ public class PlayerMovement : StateMachine
     public Transform PlayerTransform => transform;
     [SerializeField] private PlayerInputController inputController;
     public PlayerInputController InputController => inputController;
-    [SerializeField] private Camera playerCamera;
-    public Camera PlayerCamera => playerCamera;
     [SerializeField] private Animator playerAnimator;
     public Animator PlayerAnimator => playerAnimator;
     [SerializeField] private Transform thirdPersonTracker;
     public Transform ThirdPersonTracker => thirdPersonTracker;
-    [SerializeField] private CinemachineCamera thirdPersonCamera;
-    public CinemachineCamera ThirdPersonCamera => thirdPersonCamera;
-    [SerializeField] private CinemachineCamera climbingCamera;
-    public CinemachineCamera ClimbingCamera => climbingCamera;
-    [SerializeField] private CinemachineInputAxisController cinemachineInputAxisController;
+    [FormerlySerializedAs("playerCamera")] [FormerlySerializedAs("playerCameras")] [SerializeField] private PlayerCamera playerCamera;
+    public PlayerCamera PlayerCamera => playerCamera;
+
 
     [Header("Attributes")] 
     [Tooltip("Height of the player character, used in things like climbing checks")]
@@ -97,12 +94,12 @@ public class PlayerMovement : StateMachine
     [Header("Looking")]
     [Tooltip("Multiplier to adjust look sensitivity")]
     [SerializeField] private float lookSensitivity = 0.1f;
+    
+    public bool MouseRotatePlayer => currentState is IMovementState { UseMouseRotatePlayer: true };
 
 
 
 
-    private bool canRotatePlayer = true;
-    public bool CanRotatePlayer => canRotatePlayer;
     
     private float defaultColliderHeight;
     private InputAxis.RecenteringSettings originalCameraRecentering;
@@ -160,9 +157,8 @@ public class PlayerMovement : StateMachine
         
         if (!(currentState is IMovementState { UseRigidbody: true }))
         {
-            // Rotating player when no rigidbody
-            if(canRotatePlayer)
-                FrameLook();
+            // Rotation when no rigidbody
+            FrameLook();
             
             // Only apply velocity if currently not using rigidbody
             ApplyVelocity();
@@ -176,8 +172,7 @@ public class PlayerMovement : StateMachine
         if (currentState is IMovementState { UseRigidbody: true })
         {
             // Rotating player when using rigidbody
-            if(canRotatePlayer)
-                FrameLook();
+            FrameLook();
         }
     }
 
@@ -266,8 +261,10 @@ public class PlayerMovement : StateMachine
         
         Vector2 finalInput = input * (lookSensitivity * Time.deltaTime);
         
+        
         // Rotate player Y axis
-        transform.Rotate(Vector3.up, finalInput.x);
+        if(MouseRotatePlayer)
+            transform.Rotate(Vector3.up, finalInput.x);
         
         // If X axis is not zero, slerp back to 0
         if (transform.localEulerAngles.x != 0f)
@@ -276,18 +273,18 @@ public class PlayerMovement : StateMachine
             Quaternion targetRotation = Quaternion.Euler(0f, transform.localEulerAngles.y, 0f);
             transform.localRotation = Quaternion.Slerp(startRotation, targetRotation, 0.2f);
         }
+        
 
-        // Rotate third person tracker
+        // Rotate third person tracker vertically
         thirdPersonTracker.transform.rotation *= Quaternion.AngleAxis(-finalInput.y, Vector3.right);
+        
         // Clamp third person X axis
         Vector3 trackerEuler = thirdPersonTracker.localEulerAngles;
         trackerEuler.z = 0;
-        
         float angle = trackerEuler.x;
         if (angle is > 180f and < 340f) angle = 340f;
         else if (angle is < 180f and > 40f) angle = 40f;
         trackerEuler.x = angle;
-        
         thirdPersonTracker.localEulerAngles = trackerEuler;
         
     }
@@ -315,21 +312,6 @@ public class PlayerMovement : StateMachine
         }
         #endregion
 
-    }
-
-    public void ToggleCameraXOrbit(bool enable)
-    {
-        // Toggle Cinemachine X axis
-        foreach(var controller in cinemachineInputAxisController.Controllers)
-        {
-            if(controller.Name == "Look Orbit X")
-            {
-                controller.Enabled = enable;
-                // Toggle player from rotating with camera
-                canRotatePlayer = !enable;
-                break;
-            }
-        }
     }
     
     public float GetGroundDistance()

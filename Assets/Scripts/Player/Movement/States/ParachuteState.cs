@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 [Serializable]
@@ -10,8 +11,10 @@ public class ParachutingSettings : StateSettings
     public float ParachuteMaxSpeed => parachutingMaxSpeed;
     [SerializeField] private float parachutingAcceleration = 30f;
     public float ParachuteAcceleration => parachutingAcceleration;
-    [SerializeField] private float parachutingTurnSpeed = 5f;
-    public float ParachuteTurnSpeed => parachutingTurnSpeed;
+    [SerializeField] private float parachutingTurnMaxSpeed = 5f;
+    public float ParachuteTurnMaxSpeed => parachutingTurnMaxSpeed;
+    [SerializeField] private float parachutingTurnAcceleration = 10f;
+    public float ParachuteTurnAcceleration => parachutingTurnAcceleration;
     [SerializeField] private float parachutingGravity = -3f;
     public float ParachuteGravity => parachutingGravity;
     [SerializeField] private float parachutingStartBoost;
@@ -37,6 +40,7 @@ public class ParachuteState : MovementState
     
     public ParachutingSettings Settings => stateMachine.ParachutingSettings;
     public override bool UseRigidbody => true;
+    public override bool UseMouseRotatePlayer => false;
 
 
     protected override void SetEnterConditions()
@@ -50,6 +54,7 @@ public class ParachuteState : MovementState
     {
         base.OnEnter();
         
+        stateMachine.PlayerCamera.ChangeCamera(PlayerCamera.CameraType.Climbing);
         
         // Gives a small forward boost when deploying parachute
         stateMachine.GetRigidbody.AddForce(stateMachine.transform.forward * Settings.ParachuteStartBoost, ForceMode.VelocityChange);
@@ -79,6 +84,8 @@ public class ParachuteState : MovementState
     public override void OnExit()
     {
         stateMachine.PlayerAnimator.SetBool(IsParachuting, false);
+        
+        stateMachine.PlayerCamera.ChangeCamera(PlayerCamera.CameraType.Main);
 
     }
 
@@ -100,7 +107,7 @@ public class ParachuteState : MovementState
         
         // Rotate based on input
         Vector2 input = stateMachine.InputController.FrameMove;
-        float turnAmount = input.x * Settings.ParachuteTurnSpeed * Time.fixedDeltaTime;
+        float turnAmount = input.x * Settings.ParachuteTurnMaxSpeed * Time.fixedDeltaTime;
         stateMachine.GetRigidbody.AddTorque(Vector3.up * turnAmount, ForceMode.Force);
         
     }

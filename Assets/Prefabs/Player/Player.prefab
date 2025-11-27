@@ -55,12 +55,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputController: {fileID: 4134086573061151435}
-  playerCamera: {fileID: 4552367001221092465}
   playerAnimator: {fileID: 5173216120211466665}
   thirdPersonTracker: {fileID: 5636812732384450702}
-  thirdPersonCamera: {fileID: 1007935420272750219}
-  climbingCamera: {fileID: 8699651004359315703}
-  cinemachineInputAxisController: {fileID: 7562103412146830717}
+  playerCamera: {fileID: 4552367001221092465}
   playerHeight: 2
   playerRadius: 0.25
   playerHeadNormalizedHeight: 0.8
@@ -125,7 +122,6 @@ MonoBehaviour:
     climbingRetryDelay: 0.5
     climbingStartLockIntoPlace: 0.25
     climbDistanceFromWall: 0.33
-    climbSprintSpeedMultiplier: 2
     climbVaultDistance: 0.5
     climbVaultDuration: 1
     climbVaultEasingVertical:
@@ -179,6 +175,8 @@ MonoBehaviour:
     unhangDelay: 0.4
     rehangDelay: 0.2
     autoTriggerHangDistance: 1.66
+    climbSprintLeapCooldown: 2
+    climbSprintLeapStaminaPercentage: 0.2
     climbStaminaUI: {fileID: 5515616672219483051}
     climbStaminaBar: {fileID: 10641581326834246}
     maxClimbStamina: 7
@@ -228,9 +226,10 @@ MonoBehaviour:
   parachutingSettings:
     parachutingMaxSpeed: 10
     parachutingAcceleration: 15
-    parachutingTurnSpeed: 500
+    parachutingTurnMaxSpeed: 5
+    parachutingTurnAcceleration: 10
     parachutingGravity: -15
-    parachutingStartBoost: 5
+    parachutingStartBoost: 8
     minimumHeightToDeploy: 5
     groundCheckVelocityThreshold: -3
     minimumDeployDistanceFromWall: 3
@@ -577,17 +576,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a5a350d3a737c642bd3a3ff63b1880a, type: 3}
---- !u!114 &1007935420272750219 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2327280220460540034, guid: 5a5a350d3a737c642bd3a3ff63b1880a, type: 3}
-  m_PrefabInstance: {fileID: 3292358836734905865}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &2496528507952065907 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1086983347502949242, guid: 5a5a350d3a737c642bd3a3ff63b1880a, type: 3}
@@ -603,28 +591,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7172322961987163783, guid: 5a5a350d3a737c642bd3a3ff63b1880a, type: 3}
   m_PrefabInstance: {fileID: 3292358836734905865}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7562103412146830717 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4990324939882247028, guid: 5a5a350d3a737c642bd3a3ff63b1880a, type: 3}
-  m_PrefabInstance: {fileID: 3292358836734905865}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89875cdc57c54474a8a74efd9b2a3b5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8699651004359315703 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6128150691619200766, guid: 5a5a350d3a737c642bd3a3ff63b1880a, type: 3}
-  m_PrefabInstance: {fileID: 3292358836734905865}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &5308149663071302956
 PrefabInstance:
   m_ObjectHideFlags: 0
