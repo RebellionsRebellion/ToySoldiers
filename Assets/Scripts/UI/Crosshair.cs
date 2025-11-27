@@ -10,7 +10,7 @@ public class Crosshair : MonoBehaviour
     [SerializeField] private float expandSpeed;
     [SerializeField] private Image hitmarker;
     [SerializeField] private float hitmarkerTime;
-    [SerializeField] private float spreadMultiplier = 10000f;
+    private float spreadMultiplier = 25f;
 
     void Start()
     {
