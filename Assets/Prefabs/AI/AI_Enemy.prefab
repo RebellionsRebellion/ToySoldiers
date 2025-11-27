@@ -250,13 +250,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce69e67d439c7694cb73d54c05b752df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIVision
-  Range: 10
+  Range: 20
   FOV: 120
   canSeePlayer: 0
   player: {fileID: 0}
   visionMask:
     serializedVersion: 2
     m_Bits: 247
+  aggressionTime: 1
 --- !u!95 &3479961306864216117
 Animator:
   serializedVersion: 7

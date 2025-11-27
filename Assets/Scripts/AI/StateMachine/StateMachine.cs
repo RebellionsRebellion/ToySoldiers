@@ -19,41 +19,21 @@ public class AIStateMachine : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         vision = GetComponent<AIVision>();
-        if (waypoints != null && waypoints.Count > 0)
-        {
-            ChangeState(new PatrolState(this, agent, waypoints, currentWaypoint));
-        }
-        else if (commander != null)
-        {
-            ChangeState(new FollowCommanderState(this, agent, commander, formationOffset));
-        }
+        ReturnToStartingState();
     }
 
     void Update()
     {
         currentState?.Execute();
         // if player enters vision collider, switch to attack state
-        if (vision.canSeePlayer)
-        {
-            if (!(currentState is AttackState))
-            {
-                ChangeState(new AttackState(this, agent, vision.player));
-            }
+        if (vision.canSeePlayer && !(currentState is AttackState))
+        { 
+            ChangeState(new AttackState(this, agent, vision.player));
         }
-        // if player leaves vision collider, switch to Patrol State if commander, otherwise follow commander state
-        else
+        // else if cant see player and is in attack state, switch to search state
+        else if (!vision.canSeePlayer && currentState is AttackState)
         {
-            if (currentState is AttackState)
-            {
-                if (waypoints != null && waypoints.Count > 0)
-                {
-                    ChangeState(new PatrolState(this, agent, waypoints, currentWaypoint));
-                }
-                else if (commander != null)
-                {
-                    ChangeState(new FollowCommanderState(this, agent, commander, formationOffset));
-                }
-            }
+            ChangeState(new SearchState(this, agent, vision.lastSeenPosition));
         }
     }
 
@@ -95,6 +75,18 @@ public class AIStateMachine : MonoBehaviour
         }
 
         Destroy(gameObject, 2f);
+    }
+
+    public void ReturnToStartingState()
+    {
+        if (waypoints != null && waypoints.Count > 0)
+        {
+            ChangeState(new PatrolState(this, agent, waypoints, currentWaypoint));
+        }
+        else if (commander != null)
+        {
+            ChangeState(new FollowCommanderState(this, agent, commander, formationOffset));
+        }
     }
 
     public List<Transform> Waypoints

@@ -5,7 +5,7 @@ public class AttackState : AIState
 {
     private Transform player;
     private AIWeaponSystem weaponSystem;
-    private float stoppingDistance = 5f;
+    private float stoppingDistance = 10f;
 
     public AttackState(AIStateMachine controller, NavMeshAgent agent, Transform player) : base(controller, agent)
     {
