@@ -16,9 +16,8 @@ MonoBehaviour:
   DisplayName: Assault Rifle
   FireRateRPM: 100
   Damage: 35
-  FireModes:
-  - Full
-  - Semi
+  SupportedFireModes: 0000000001000000
+  CurrentFireMode: 0
   MagSize: 30
   SpecialAmmo: 0
   ReloadTime: 3.2

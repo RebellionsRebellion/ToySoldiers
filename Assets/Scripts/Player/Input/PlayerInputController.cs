@@ -19,6 +19,9 @@ public class PlayerInputController : MonoBehaviour
     public Action OnShootAction;
     public bool IsReloading { get; private set; }
     public Action OnReloadAction;
+    
+    public bool IsThrowing { get; private set; }
+    public Action OnThrowAction;
 
     private void Awake()
     {
@@ -88,5 +91,13 @@ public class PlayerInputController : MonoBehaviour
         
         if(IsReloading && OnReloadAction != null)
             OnReloadAction.Invoke();
+    }
+    
+    private void OnThrow(InputValue inputValue)
+    {
+        IsThrowing = inputValue.isPressed;
+        
+        if(IsThrowing && OnThrowAction != null)
+            OnThrowAction.Invoke();
     }
 }
