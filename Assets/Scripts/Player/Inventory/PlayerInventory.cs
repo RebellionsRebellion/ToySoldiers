@@ -3,11 +3,15 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
-    [Header("Config Data (will likely need different system for later)")]
+    [Header("Weapons data")]
     [SerializeField] private WeaponDataSO startingPrimaryWeapon;
     [SerializeField] private WeaponDataSO startingSecondaryWeapon;
     [SerializeField] private int maxNormalAmmo = 300;
     [SerializeField] private int maxSpecialAmmo = 100;
+    
+    [Header("Throwables data")]
+    [SerializeField] private ThrowableDataSO startingThrowable;
+    [SerializeField] private int maxThrowableAmount;
     
     public static PlayerInventory Instance { get; private set; }
     
@@ -17,9 +21,12 @@ public class PlayerInventory : MonoBehaviour
     private Weapon secondaryWeapon;
     public Weapon GetSecondaryWeapon() => secondaryWeapon;
     private int normalAmmoCount;
+    public ThrowableDataSO GetStartingThrowable() => startingThrowable;
     public int GetNormalAmmoCount() => normalAmmoCount;
     private int specialAmmoCount;
     public int GetSpecialAmmoCount() => specialAmmoCount;
+    private int throwableCount;
+    public int GetThrowableCount() => throwableCount;
 
 
     private void Awake()
@@ -35,6 +42,7 @@ public class PlayerInventory : MonoBehaviour
         secondaryWeapon = new Weapon(startingSecondaryWeapon);
         normalAmmoCount = maxNormalAmmo;
         specialAmmoCount = maxSpecialAmmo;
+        throwableCount = maxThrowableAmount;
     }
     
     public void SetNormalAmmoCount(int count)
@@ -52,5 +60,13 @@ public class PlayerInventory : MonoBehaviour
     public void AdjustSpecialAmmoCount(int delta)
     {
         SetSpecialAmmoCount(specialAmmoCount + delta);
+    }
+    public void SetThrowableCount(int count)
+    {
+        throwableCount = Mathf.Clamp(count, 0, maxThrowableAmount);
+    }
+    public void AdjustThrowableCount(int delta)
+    {
+        SetThrowableCount(throwableCount + delta);
     }
 }
