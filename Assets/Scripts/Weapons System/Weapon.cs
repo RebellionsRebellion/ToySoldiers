@@ -7,7 +7,7 @@ public class Weapon
     [Header("Runtime Values")]
     public int CurrentAmmoInMag;
     public WeaponSpread WeaponSpread;
-    public string CurrentFireMode;
+    public WeaponDataSO.FireModes CurrentFireMode;
     public Transform FirePoint;
     
     // Constructor
@@ -20,7 +20,7 @@ public class Weapon
     {
         WeaponData = weaponData;
         CurrentAmmoInMag = weaponData.MagSize;
-        CurrentFireMode = weaponData.FireModes[0];
+        CurrentFireMode = weaponData.SupportedFireModes[0];
         FirePoint = LocateFirePoint(weaponData.WeaponPrefab);
         
         WeaponSpread = new WeaponSpread(
