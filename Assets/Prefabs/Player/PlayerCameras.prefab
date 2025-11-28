@@ -494,7 +494,7 @@ MonoBehaviour:
     Controllers:
     - Name: Look Orbit X
       Owner: {fileID: 5813169159224759092}
-      Enabled: 0
+      Enabled: 1
       Input:
         InputAction: {fileID: 5363579364645643714, guid: 38175887ad7fc6842a3398173db22a58, type: 3}
         Gain: 1
@@ -756,7 +756,7 @@ MonoBehaviour:
     Controllers:
     - Name: Look Orbit X
       Owner: {fileID: 775322710981745592}
-      Enabled: 0
+      Enabled: 1
       Input:
         InputAction: {fileID: 5363579364645643714, guid: 38175887ad7fc6842a3398173db22a58, type: 3}
         Gain: 1
@@ -801,7 +801,6 @@ GameObject:
   - component: {fileID: 2327280220460540034}
   - component: {fileID: 6749927520431355307}
   - component: {fileID: 8301443511289977847}
-  - component: {fileID: 4901839496181804234}
   m_Layer: 7
   m_Name: ThirdPersonCamera
   m_TagString: Untagged
@@ -932,25 +931,6 @@ MonoBehaviour:
     NearLimit: 5
     FarLimit: 30
     MaxQualityBoost: 0.2
---- !u!114 &4901839496181804234
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1888925077327581019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89875cdc57c54474a8a74efd9b2a3b5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ScanRecursively: 1
-  SuppressInputWhileBlending: 1
-  IgnoreTimeScale: 0
-  m_ControllerManager:
-    Controllers: []
-  PlayerIndex: -1
-  AutoEnableInputs: 1
 --- !u!1 &2093325402627320462
 GameObject:
   m_ObjectHideFlags: 0
@@ -1001,7 +981,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
   mainCamera: {fileID: 1341385769374030456}
-  cinemachineBrain: {fileID: 0}
+  cinemachineBrain: {fileID: 3448524778426289882}
+  cameras:
+    _serializedList:
+    - Key: 0
+      Value: {fileID: 2327280220460540034}
+    - Key: 2
+      Value: {fileID: 6128150691619200766}
+    - Key: 3
+      Value: {fileID: 7237495087080277502}
+  defaultCamera: 0
 --- !u!1 &8424926414806586742
 GameObject:
   m_ObjectHideFlags: 0

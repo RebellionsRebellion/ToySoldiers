@@ -100,6 +100,7 @@ public class ClimbingState : MovementState
     public override bool UseGravity => false;
     public override bool UseRootMotion => true;
     public override bool UseMouseRotatePlayer => false;
+    public override bool ControlRotation => true;
 
     private Tween unhangDelayTween;
     private Tween rehangDelayTween;
@@ -165,6 +166,8 @@ public class ClimbingState : MovementState
         
         // Climb speed needs to be set to 1 to finish climb animation properly
         stateMachine.PlayerAnimator.SetFloat(ClimbSpeed, 1);
+        
+        stateMachine.PlayerCamera.ChangeCamera(PlayerCamera.CameraType.Main);
         
         ToggleStaminaBar(false);
         
@@ -239,7 +242,7 @@ public class ClimbingState : MovementState
                 SprintLeap();
             
             Vector3 upVelocity = climbStartData.UpDirection * (Settings.ClimbVerticalSpeed * upInput);
-            Vector3 rightVelocity = stateMachine.PlayerTransform.right * (Settings.ClimbHorizontalSpeed * sideInput);
+            Vector3 rightVelocity = stateMachine.transform.right * (Settings.ClimbHorizontalSpeed * sideInput);
             Vector3 finalVelocity = upVelocity + rightVelocity;
             
             stateMachine.SetVelocity(finalVelocity);
@@ -280,7 +283,7 @@ public class ClimbingState : MovementState
             stateMachine.SetPosition(Vector3.Lerp(climbStartData.PlayerPosition, targetPosition, lockT));
             // Face wall
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            stateMachine.SetRotation(Quaternion.Slerp(stateMachine.PlayerTransform.rotation, targetRotation, lockT));
+            stateMachine.SetRotation(Quaternion.Slerp(stateMachine.transform.rotation, targetRotation, lockT));
         }
         
         UpdateStaminaUI();
@@ -362,8 +365,8 @@ public class ClimbingState : MovementState
         
         // Calculate ending position
         Vector3 verticalOffset = climbStartData.UpDirection * (stateMachine.PlayerHeight + 0.5f);
-        Vector3 forwardOffset = stateMachine.PlayerTransform.forward * Settings.ClimbVaultDistance;
-        Vector3 targetPosition = stateMachine.PlayerTransform.position + verticalOffset + forwardOffset;
+        Vector3 forwardOffset = stateMachine.transform.forward * Settings.ClimbVaultDistance;
+        Vector3 targetPosition = stateMachine.transform.position + verticalOffset + forwardOffset;
         // Raycast down to find ground
         Vector3 vaultPosition = targetPosition;
         Ray downRay = new Ray(targetPosition, Vector3.down);
@@ -388,8 +391,8 @@ public class ClimbingState : MovementState
 
         float vaultTimer;
         float vaultDuration = Settings.ClimbVaultDuration;
-        Vector3 startPosition = stateMachine.PlayerTransform.position;
-        Vector3 startRotation = stateMachine.PlayerTransform.localEulerAngles;
+        Vector3 startPosition = stateMachine.transform.position;
+        Vector3 startRotation = stateMachine.transform.eulerAngles;
         for (vaultTimer = 0f; vaultTimer < vaultDuration; vaultTimer += Time.deltaTime)
         {
             float t = vaultTimer / vaultDuration;
@@ -405,7 +408,7 @@ public class ClimbingState : MovementState
             
             // Lerp X rotation back to 0
             Quaternion targetRotation = Quaternion.Euler(0f, startRotation.y, startRotation.z);
-            stateMachine.SetRotation(Quaternion.Slerp(stateMachine.PlayerTransform.rotation, targetRotation, t));
+            stateMachine.SetRotation(Quaternion.Slerp(stateMachine.transform.rotation, targetRotation, t));
             
             yield return null;
         }
@@ -456,9 +459,8 @@ public class ClimbingState : MovementState
     {
         float maxDistance = 100;
         
-        Transform playerTransform = stateMachine.PlayerTransform;
-        Vector3 headOrigin = playerTransform.position + stateMachine.transform.up * stateMachine.PlayerHeadHeight;
-        Vector3 wallPosition = headOrigin + (playerTransform.forward * (Settings.ClimbRange+0.1f));
+        Vector3 headOrigin = stateMachine.transform.position + stateMachine.transform.transform.up * stateMachine.PlayerHeadHeight;
+        Vector3 wallPosition = headOrigin + (stateMachine.transform.forward * (Settings.ClimbRange+0.1f));
 
         Ray distanceRay = new Ray(wallPosition + Vector3.up * maxDistance, -climbStartData.UpDirection);
         if (Physics.Raycast(distanceRay, out var hitInfo, maxDistance, Settings.ClimbableLayer))
@@ -472,7 +474,7 @@ public class ClimbingState : MovementState
     private float DistanceToFloor(float offset = 0)
     {
         float maxDistance = 100;
-        Vector3 startPosition = stateMachine.PlayerTransform.position + Vector3.up * offset;
+        Vector3 startPosition = stateMachine.transform.position + Vector3.up * offset;
         Ray distanceRay = new Ray(startPosition, -Vector3.up);
         if (Physics.Raycast(distanceRay, out var hitInfo, maxDistance, stateMachine.EnvironmentLayer))
         {
@@ -487,12 +489,13 @@ public class ClimbingState : MovementState
     
     public ClimbDirections GetClimbState()
     {
-        Transform playerTransform = stateMachine.PlayerTransform;
-        Vector3 bottomOrigin = playerTransform.position + stateMachine.transform.up * 0.1f;
-        Vector3 topOrigin = playerTransform.position + stateMachine.transform.up * (stateMachine.PlayerHeight - 0.1f);
-        Vector3 headOrigin = playerTransform.position + stateMachine.transform.up * stateMachine.PlayerHeadHeight;
-        Vector3 direction = playerTransform.forward;
-        Vector3 sideDirection = playerTransform.right * stateMachine.PlayerRadius;
+        Vector3 playerPosition = stateMachine.transform.position;
+        Vector3 playerUp = stateMachine.transform.up;
+        Vector3 bottomOrigin = playerPosition + playerUp * 0.1f;
+        Vector3 topOrigin = playerPosition + playerUp * (stateMachine.PlayerHeight - 0.1f);
+        Vector3 headOrigin = playerPosition + playerUp * stateMachine.PlayerHeadHeight;
+        Vector3 direction = stateMachine.transform.forward;
+        Vector3 sideDirection = stateMachine.transform.right * stateMachine.PlayerRadius;
         // Create rays for each direction
         Ray downRay = new Ray(bottomOrigin, direction);
         Ray upRay = new Ray(topOrigin, direction);
@@ -552,7 +555,7 @@ public class ClimbingState : MovementState
                 Vector3 startPosition = hitInfo.point;
                 Vector3 startNormal = hitInfo.normal;
                 
-                climbStartData = new ClimbStartData(startPosition, startNormal, playerTransform.position);
+                climbStartData = new ClimbStartData(startPosition, startNormal, stateMachine.transform.position);
             }
 
         }

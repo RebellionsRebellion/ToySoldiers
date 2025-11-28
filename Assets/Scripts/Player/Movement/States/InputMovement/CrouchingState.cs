@@ -59,8 +59,8 @@ public class CrouchingState : InputMoveState
     public bool CanStandUp()
     {
         float defaultHeight = stateMachine.PlayerHeight;
-        Vector3 start = stateMachine.PlayerTransform.position + Vector3.up * GetCrouchHeight;
-        Vector3 end = stateMachine.PlayerTransform.position + Vector3.up * defaultHeight;
+        Vector3 start = stateMachine.transform.position + Vector3.up * GetCrouchHeight;
+        Vector3 end = stateMachine.transform.position + Vector3.up * defaultHeight;
         float radius = stateMachine.PlayerRadius * 0.9f;
 
         // Check for collisions using a capsule cast

@@ -17,7 +17,6 @@ public class PlayerMovement : StateMachine
     private CapsuleCollider col;
     
     [Header("Components")]
-    public Transform PlayerTransform => transform;
     [SerializeField] private PlayerInputController inputController;
     public PlayerInputController InputController => inputController;
     [SerializeField] private Animator playerAnimator;
@@ -26,6 +25,9 @@ public class PlayerMovement : StateMachine
     public Transform ThirdPersonTracker => thirdPersonTracker;
     [FormerlySerializedAs("playerCamera")] [FormerlySerializedAs("playerCameras")] [SerializeField] private PlayerCamera playerCamera;
     public PlayerCamera PlayerCamera => playerCamera;
+    [SerializeField] private Transform visualRotation;
+    
+    
 
 
     [Header("Attributes")] 
@@ -89,6 +91,8 @@ public class PlayerMovement : StateMachine
     
     public Vector3 CurrentVelocity => currentVelocity;
     private Vector3 currentVelocity;
+    public Vector3 GetCurrentRigidbodyVelocity => rb.linearVelocity;
+    public Vector3 GetCurrentRigidbodyAngularVelocity => rb.angularVelocity;
     
     
     [Header("Looking")]
@@ -266,8 +270,9 @@ public class PlayerMovement : StateMachine
         if(MouseRotatePlayer)
             transform.Rotate(Vector3.up, finalInput.x);
         
-        // If X axis is not zero, slerp back to 0
-        if (transform.localEulerAngles.x != 0f)
+        // If X or Z axis is not zero, slerp back to 0
+        if (currentState is IMovementState { ControlRotation: false } 
+            && (transform.localEulerAngles.x != 0f || transform.localEulerAngles.z != 0f))
         {
             Quaternion startRotation = transform.localRotation;
             Quaternion targetRotation = Quaternion.Euler(0f, transform.localEulerAngles.y, 0f);

@@ -15,6 +15,12 @@ public class ParachutingSettings : StateSettings
     public float ParachuteTurnMaxSpeed => parachutingTurnMaxSpeed;
     [SerializeField] private float parachutingTurnAcceleration = 10f;
     public float ParachuteTurnAcceleration => parachutingTurnAcceleration;
+    [SerializeField] private float parachutingDiveMaxAngle = 45f;
+    public float ParachuteDiveMaxAngle => parachutingDiveMaxAngle;
+    [SerializeField] private float parachutingDiveSpeed = 3;
+    public float ParachuteDiveAcceleration => parachutingDiveSpeed;
+    [SerializeField] private Easing.EaseType parachutingDiveEasing = Easing.EaseType.InOutSine;
+    public Easing.EaseType ParachuteDiveEasing => parachutingDiveEasing;
     [SerializeField] private float parachutingGravity = -3f;
     public float ParachuteGravity => parachutingGravity;
     [SerializeField] private float parachutingStartBoost;
@@ -41,6 +47,9 @@ public class ParachuteState : MovementState
     public ParachutingSettings Settings => stateMachine.ParachutingSettings;
     public override bool UseRigidbody => true;
     public override bool UseMouseRotatePlayer => false;
+    public override bool ControlRotation => true;
+
+    private float currentDiveTime = 0.0f;
 
 
     protected override void SetEnterConditions()
@@ -54,13 +63,15 @@ public class ParachuteState : MovementState
     {
         base.OnEnter();
         
-        stateMachine.PlayerCamera.ChangeCamera(PlayerCamera.CameraType.Climbing);
+        stateMachine.PlayerCamera.ChangeCamera(PlayerCamera.CameraType.Parachute);
         
         // Gives a small forward boost when deploying parachute
         stateMachine.GetRigidbody.AddForce(stateMachine.transform.forward * Settings.ParachuteStartBoost, ForceMode.VelocityChange);
         
         stateMachine.PlayerAnimator.SetBool(IsParachuting, true);
         stateMachine.PlayerAnimator.CrossFade("Parachuting", 0.1f);
+        
+        currentDiveTime = 0.0f;
 
     }
 
@@ -107,9 +118,44 @@ public class ParachuteState : MovementState
         
         // Rotate based on input
         Vector2 input = stateMachine.InputController.FrameMove;
-        float turnAmount = input.x * Settings.ParachuteTurnMaxSpeed * Time.fixedDeltaTime;
-        stateMachine.GetRigidbody.AddTorque(Vector3.up * turnAmount, ForceMode.Force);
         
+        var rb = stateMachine.GetRigidbody;
+        
+        // Turn horizontally
+        float targetTurn  = input.x * Settings.ParachuteTurnMaxSpeed;
+        float currentTurn = rb.angularVelocity.y;
+        float newY = Mathf.MoveTowards(
+            currentTurn,
+            targetTurn,
+            Settings.ParachuteTurnAcceleration * Time.fixedDeltaTime
+        );
+        Vector3 ang1 = rb.angularVelocity;
+        ang1.y = newY;
+        rb.angularVelocity = ang1;   
+        
+        // Tilt forward/back based on vertical input
+        if (Mathf.Abs(input.y) > 0)
+            currentDiveTime += Time.fixedDeltaTime;
+        else
+            currentDiveTime -= Time.fixedDeltaTime;
+        currentDiveTime = Mathf.Clamp(currentDiveTime, 0.0f, 1.0f);
+        
+        var diveEase = Easing.FindEaseType(Settings.ParachuteDiveEasing);
+        float diveFactor = diveEase(currentDiveTime);
+        float targetPitch = input.y * Settings.ParachuteDiveMaxAngle * diveFactor;
+        Vector3 currentEuler = stateMachine.transform.eulerAngles;
+        // Handle wrap around
+        if (currentEuler.x > 180f)
+            currentEuler.x -= 360f;
+        float newX = Mathf.MoveTowards(
+            currentEuler.x,
+            targetPitch,
+            Settings.ParachuteDiveAcceleration * Time.fixedDeltaTime
+        );
+        stateMachine.transform.eulerAngles = new Vector3(newX, currentEuler.y, currentEuler.z);
+
+
+
     }
     
     private bool IsFacingWall(float distance = 1f)
