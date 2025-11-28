@@ -58,7 +58,7 @@ public class SlidingState : MovementState
 
     public override void Tick()
     {
-        Vector3 direction = stateMachine.transform.forward;
+        Vector3 direction = stateMachine.Forward;
         float progress = slideTime / Settings.SlideDuration;
         float speedMultiplier = Settings.SlideSpeedCurve.Evaluate(1-progress);
         

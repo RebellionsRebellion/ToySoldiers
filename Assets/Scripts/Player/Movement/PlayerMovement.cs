@@ -12,8 +12,6 @@ using UnityEngine.UI;
 public class PlayerMovement : StateMachine
 {
     private CharacterController cc;
-    private Rigidbody rb;
-    public Rigidbody GetRigidbody => rb;
     private CapsuleCollider col;
     
     [Header("Components")]
@@ -25,10 +23,15 @@ public class PlayerMovement : StateMachine
     public Transform ThirdPersonTracker => thirdPersonTracker;
     [FormerlySerializedAs("playerCamera")] [FormerlySerializedAs("playerCameras")] [SerializeField] private PlayerCamera playerCamera;
     public PlayerCamera PlayerCamera => playerCamera;
-    [SerializeField] private Transform visualRotation;
-    
-    
-
+    [SerializeField] private Transform rotationRoot;
+    [SerializeField] private Transform visualRoot;
+    public Transform VisualRoot => visualRoot;
+    public Vector3 Position => transform.position;
+    public Quaternion Rotation => rotationRoot.rotation;
+    public Vector3 RotationEuler => rotationRoot.eulerAngles;
+    public Vector3 Forward => rotationRoot.forward;
+    public Vector3 Right => rotationRoot.right;
+    public Vector3 Up => rotationRoot.up;
 
     [Header("Attributes")] 
     [Tooltip("Height of the player character, used in things like climbing checks")]
@@ -91,8 +94,6 @@ public class PlayerMovement : StateMachine
     
     public Vector3 CurrentVelocity => currentVelocity;
     private Vector3 currentVelocity;
-    public Vector3 GetCurrentRigidbodyVelocity => rb.linearVelocity;
-    public Vector3 GetCurrentRigidbodyAngularVelocity => rb.angularVelocity;
     
     
     [Header("Looking")]
@@ -116,7 +117,6 @@ public class PlayerMovement : StateMachine
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
         
         cc = GetComponent<CharacterController>();
-        rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
         // Copy character controller collider data to capsule collider
         cc.radius = playerRadius;
@@ -159,27 +159,12 @@ public class PlayerMovement : StateMachine
     {
         base.Update();
         
-        if (!(currentState is IMovementState { UseRigidbody: true }))
-        {
-            // Rotation when no rigidbody
-            FrameLook();
-            
-            // Only apply velocity if currently not using rigidbody
-            ApplyVelocity();
-        }
-    }
-
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
+        // Rotation when no rigidbody
+        FrameLook();
         
-        if (currentState is IMovementState { UseRigidbody: true })
-        {
-            // Rotating player when using rigidbody
-            FrameLook();
-        }
+        ApplyVelocity();
     }
-
+    
 
     private void ApplyVelocity()
     {
@@ -226,11 +211,23 @@ public class PlayerMovement : StateMachine
     }
     public void SetRotation(Quaternion newRotation)
     {
-        transform.rotation = newRotation;
+        rotationRoot.rotation = newRotation;
     }
     public void SetRotation(Vector3 eulerAngles)
     {
-        transform.rotation = Quaternion.Euler(eulerAngles);
+        rotationRoot.rotation = Quaternion.Euler(eulerAngles);
+    }
+    public Quaternion GetVisualRotation()
+    {
+        return visualRoot.localRotation;
+    }
+    public void SetVisualRotation(Quaternion newRotation)
+    {
+        visualRoot.localRotation = newRotation;
+    }
+    public void SetVisualRotation(Vector3 eulerAngles)
+    {
+        visualRoot.localRotation = Quaternion.Euler(eulerAngles);
     }
     
     public void ChangeHeight(float newHeight)
@@ -248,17 +245,6 @@ public class PlayerMovement : StateMachine
         ChangeHeight(defaultColliderHeight);
     }
 
-    private RigidbodyInterpolation originalRigidbodyInterpolation;
-    public void ToggleRigidbody(bool value)
-    {
-        cc.enabled = !value;
-        rb.isKinematic = !value;
-        if(rb.interpolation != RigidbodyInterpolation.None)
-            originalRigidbodyInterpolation = rb.interpolation;
-        rb.interpolation = value ? originalRigidbodyInterpolation : RigidbodyInterpolation.None;
-        col.enabled = value;
-    }
-
     private void FrameLook()
     {
         Vector2 input = inputController.FrameLook;
@@ -268,15 +254,15 @@ public class PlayerMovement : StateMachine
         
         // Rotate player Y axis
         if(MouseRotatePlayer)
-            transform.Rotate(Vector3.up, finalInput.x);
+            rotationRoot.Rotate(Vector3.up, finalInput.x);
         
         // If X or Z axis is not zero, slerp back to 0
         if (currentState is IMovementState { ControlRotation: false } 
-            && (transform.localEulerAngles.x != 0f || transform.localEulerAngles.z != 0f))
+            && (RotationEuler.x != 0f || RotationEuler.z != 0f))
         {
-            Quaternion startRotation = transform.localRotation;
-            Quaternion targetRotation = Quaternion.Euler(0f, transform.localEulerAngles.y, 0f);
-            transform.localRotation = Quaternion.Slerp(startRotation, targetRotation, 0.2f);
+            Quaternion startRotation = rotationRoot.localRotation;
+            Quaternion targetRotation = Quaternion.Euler(0f, RotationEuler.y, 0f);
+            rotationRoot.localRotation = Quaternion.Slerp(startRotation, targetRotation, 0.2f);
         }
         
 

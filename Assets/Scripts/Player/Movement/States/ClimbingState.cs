@@ -242,7 +242,7 @@ public class ClimbingState : MovementState
                 SprintLeap();
             
             Vector3 upVelocity = climbStartData.UpDirection * (Settings.ClimbVerticalSpeed * upInput);
-            Vector3 rightVelocity = stateMachine.transform.right * (Settings.ClimbHorizontalSpeed * sideInput);
+            Vector3 rightVelocity = stateMachine.Right * (Settings.ClimbHorizontalSpeed * sideInput);
             Vector3 finalVelocity = upVelocity + rightVelocity;
             
             stateMachine.SetVelocity(finalVelocity);
@@ -283,7 +283,7 @@ public class ClimbingState : MovementState
             stateMachine.SetPosition(Vector3.Lerp(climbStartData.PlayerPosition, targetPosition, lockT));
             // Face wall
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            stateMachine.SetRotation(Quaternion.Slerp(stateMachine.transform.rotation, targetRotation, lockT));
+            stateMachine.SetRotation(Quaternion.Slerp(stateMachine.Rotation, targetRotation, lockT));
         }
         
         UpdateStaminaUI();
@@ -365,8 +365,8 @@ public class ClimbingState : MovementState
         
         // Calculate ending position
         Vector3 verticalOffset = climbStartData.UpDirection * (stateMachine.PlayerHeight + 0.5f);
-        Vector3 forwardOffset = stateMachine.transform.forward * Settings.ClimbVaultDistance;
-        Vector3 targetPosition = stateMachine.transform.position + verticalOffset + forwardOffset;
+        Vector3 forwardOffset = stateMachine.Forward * Settings.ClimbVaultDistance;
+        Vector3 targetPosition = stateMachine.Position + verticalOffset + forwardOffset;
         // Raycast down to find ground
         Vector3 vaultPosition = targetPosition;
         Ray downRay = new Ray(targetPosition, Vector3.down);
@@ -391,8 +391,8 @@ public class ClimbingState : MovementState
 
         float vaultTimer;
         float vaultDuration = Settings.ClimbVaultDuration;
-        Vector3 startPosition = stateMachine.transform.position;
-        Vector3 startRotation = stateMachine.transform.eulerAngles;
+        Vector3 startPosition = stateMachine.Position;
+        Vector3 startRotation = stateMachine.RotationEuler;
         for (vaultTimer = 0f; vaultTimer < vaultDuration; vaultTimer += Time.deltaTime)
         {
             float t = vaultTimer / vaultDuration;
@@ -408,7 +408,7 @@ public class ClimbingState : MovementState
             
             // Lerp X rotation back to 0
             Quaternion targetRotation = Quaternion.Euler(0f, startRotation.y, startRotation.z);
-            stateMachine.SetRotation(Quaternion.Slerp(stateMachine.transform.rotation, targetRotation, t));
+            stateMachine.SetRotation(Quaternion.Slerp(stateMachine.Rotation, targetRotation, t));
             
             yield return null;
         }
@@ -459,8 +459,8 @@ public class ClimbingState : MovementState
     {
         float maxDistance = 100;
         
-        Vector3 headOrigin = stateMachine.transform.position + stateMachine.transform.transform.up * stateMachine.PlayerHeadHeight;
-        Vector3 wallPosition = headOrigin + (stateMachine.transform.forward * (Settings.ClimbRange+0.1f));
+        Vector3 headOrigin = stateMachine.Position + stateMachine.Up * stateMachine.PlayerHeadHeight;
+        Vector3 wallPosition = headOrigin + (stateMachine.Forward * (Settings.ClimbRange+0.1f));
 
         Ray distanceRay = new Ray(wallPosition + Vector3.up * maxDistance, -climbStartData.UpDirection);
         if (Physics.Raycast(distanceRay, out var hitInfo, maxDistance, Settings.ClimbableLayer))
@@ -474,7 +474,7 @@ public class ClimbingState : MovementState
     private float DistanceToFloor(float offset = 0)
     {
         float maxDistance = 100;
-        Vector3 startPosition = stateMachine.transform.position + Vector3.up * offset;
+        Vector3 startPosition = stateMachine.Position + Vector3.up * offset;
         Ray distanceRay = new Ray(startPosition, -Vector3.up);
         if (Physics.Raycast(distanceRay, out var hitInfo, maxDistance, stateMachine.EnvironmentLayer))
         {
@@ -489,13 +489,13 @@ public class ClimbingState : MovementState
     
     public ClimbDirections GetClimbState()
     {
-        Vector3 playerPosition = stateMachine.transform.position;
-        Vector3 playerUp = stateMachine.transform.up;
+        Vector3 playerPosition = stateMachine.Position;
+        Vector3 playerUp = stateMachine.Up;
         Vector3 bottomOrigin = playerPosition + playerUp * 0.1f;
         Vector3 topOrigin = playerPosition + playerUp * (stateMachine.PlayerHeight - 0.1f);
         Vector3 headOrigin = playerPosition + playerUp * stateMachine.PlayerHeadHeight;
-        Vector3 direction = stateMachine.transform.forward;
-        Vector3 sideDirection = stateMachine.transform.right * stateMachine.PlayerRadius;
+        Vector3 direction = stateMachine.Forward;
+        Vector3 sideDirection = stateMachine.Right * stateMachine.PlayerRadius;
         // Create rays for each direction
         Ray downRay = new Ray(bottomOrigin, direction);
         Ray upRay = new Ray(topOrigin, direction);
@@ -518,8 +518,9 @@ public class ClimbingState : MovementState
             
             // If up direction is too steep, ignore
             Vector3 normal = hitInfo.normal;
-            // Calculate angle between normal and ray direction
-            float angle = Vector3.SignedAngle(-normal, direction, Vector3.up);
+            // Calculate angle between normal and up direction
+            float angle = Vector3.SignedAngle(-normal, Vector3.up, Vector3.up);
+            angle -= 90;
             if (angle < Settings.ClimbingAngleLimits.x || angle > Settings.ClimbingAngleLimits.y)
                 return climbDirections;
             
@@ -555,7 +556,7 @@ public class ClimbingState : MovementState
                 Vector3 startPosition = hitInfo.point;
                 Vector3 startNormal = hitInfo.normal;
                 
-                climbStartData = new ClimbStartData(startPosition, startNormal, stateMachine.transform.position);
+                climbStartData = new ClimbStartData(startPosition, startNormal, stateMachine.Position);
             }
 
         }
