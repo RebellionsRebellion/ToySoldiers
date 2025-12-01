@@ -42,6 +42,9 @@ public class ParachutingSettings : StateSettings
     [Tooltip("Minimum distance from wall to initiate parachute")]
     [SerializeField] private float minimumDeployDistanceFromWall = 3;
     public float MinimumDeployDistanceFromWall => minimumDeployDistanceFromWall;
+    [Tooltip("Multiplier to increase the camera FOV when travelling at max speed")]
+    [SerializeField] private float fovMultiplierAtMaxSpeed = 1.2f;
+    public float FovMultiplierAtMaxSpeed => fovMultiplierAtMaxSpeed;
 }
 
 public class ParachuteState : MovementState
@@ -84,7 +87,7 @@ public class ParachuteState : MovementState
     public override void CheckTransitions()
     { 
         // Cancel state
-        if (stateMachine.InputController.IsCrouching)
+        if (stateMachine.InputController.CrouchDown)
             SwitchState(stateMachine.FallingState);
 
         // Landed
@@ -92,7 +95,7 @@ public class ParachuteState : MovementState
             SwitchState(stateMachine.WalkingState);
         
         // If they hit a wall
-        if (IsFacingWall() && stateMachine.ClimbingState.CanClimb())
+        if (stateMachine.IsFacingWall() && stateMachine.ClimbingState.CanClimb())
         {
             SwitchState(stateMachine.ClimbingState);
         }
@@ -148,6 +151,10 @@ public class ParachuteState : MovementState
         travelVelocity += Vector3.up * (Settings.ParachuteGravity);
         stateMachine.SetVelocity(travelVelocity);
         
+        // Set fov based on velocity
+        float speedProgress = Mathf.Clamp01(travelVelocity.magnitude / (Settings.ParachuteMaxSpeed * (1f + Settings.ParachuteDiveSpeedBoost)));
+        stateMachine.PlayerCamera.CurrentFovMultiplier = Mathf.Lerp(1, Settings.FovMultiplierAtMaxSpeed, speedProgress);
+        
 
         
         // Tilt based on turn
@@ -175,13 +182,6 @@ public class ParachuteState : MovementState
 
 
     }
-    
-    private bool IsFacingWall(float distance = 1f)
-    {
-        Vector3 origin = stateMachine.Position + Vector3.up * stateMachine.PlayerHeight/2;
-        Vector3 direction = stateMachine.Forward;
-        return Physics.Raycast(origin, stateMachine.Forward, out var hit, distance, stateMachine.EnvironmentLayer);
-    }
 
     private bool CanParachute()
     {
@@ -191,7 +191,7 @@ public class ParachuteState : MovementState
         
         
         // Check if wall is in the wall
-        if (IsFacingWall(Settings.MinimumDeployDistanceFromWall))
+        if (stateMachine.IsFacingWall(Settings.MinimumDeployDistanceFromWall))
             return false;
 
         return true;

@@ -587,7 +587,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 75
+    FieldOfView: 60
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -991,6 +991,8 @@ MonoBehaviour:
     - Key: 3
       Value: {fileID: 7237495087080277502}
   defaultCamera: 0
+  fovResetDuration: 1
+  fovSetDuration: 0.5
 --- !u!1 &8424926414806586742
 GameObject:
   m_ObjectHideFlags: 0

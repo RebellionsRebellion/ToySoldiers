@@ -13,7 +13,9 @@ public class PlayerInputController : MonoBehaviour
     private bool previousJumpHeld;
 
     public bool IsSprinting { get; private set; }
-    public bool IsCrouching { get; private set; }
+    public bool CrouchDown { get; private set; }
+    public bool CrouchHeld { get; private set; }
+    private bool previousCrouchHeld;
     public bool IsAiming { get; private set; }
     public bool IsShooting { get; private set; }
     public Action OnShootAction;
@@ -37,8 +39,10 @@ public class PlayerInputController : MonoBehaviour
     private void LateUpdate()
     {
         previousJumpHeld = JumpHeld;
+        previousCrouchHeld = CrouchHeld;
 
         JumpDown = false;
+        CrouchDown = false;
     }
     
     private void OnMove(InputValue inputValue)
@@ -66,7 +70,10 @@ public class PlayerInputController : MonoBehaviour
     
     private void OnCrouch(InputValue inputValue)
     {
-        IsCrouching = inputValue.isPressed;
+        bool isPressed = inputValue.isPressed;
+
+        CrouchDown = isPressed && !previousCrouchHeld;
+        CrouchHeld = isPressed;
     }
     
     private void OnLook(InputValue inputValue)

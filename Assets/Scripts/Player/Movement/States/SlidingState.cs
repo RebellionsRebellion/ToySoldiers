@@ -78,7 +78,7 @@ public class SlidingState : MovementState
         }
         
         // Cancel slide
-        if(!stateMachine.InputController.IsCrouching)
+        if(!stateMachine.InputController.CrouchHeld)
         {
             // If they cant stand up, go to crouch
             if(!stateMachine.CrouchingState.CanStandUp())
@@ -87,6 +87,18 @@ public class SlidingState : MovementState
                 SwitchState(stateMachine.SprintingState);
             else
                 SwitchState(stateMachine.WalkingState);
+        }
+        
+        // If they slide into a wall
+        if (stateMachine.IsFacingWall() && stateMachine.ClimbingState.CanClimb())
+        {
+            SwitchState(stateMachine.ClimbingState);
+        }
+        
+        // If they slide off a ledge
+        if (!stateMachine.IsGrounded)
+        {
+            SwitchState(stateMachine.FallingState);
         }
     }
 

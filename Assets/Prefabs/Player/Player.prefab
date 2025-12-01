@@ -72,6 +72,7 @@ MonoBehaviour:
     acceleration: 20
     maxAcceleration: 20
     turnSpeed: 1
+    forwardInputThreshold: 0.6
   walkingSettings:
     walkSpeedMultiplier: 1
   sprintingSettings:
@@ -241,6 +242,7 @@ MonoBehaviour:
     minimumHeightToDeploy: 5
     groundCheckVelocityThreshold: -3
     minimumDeployDistanceFromWall: 3
+    fovMultiplierAtMaxSpeed: 1.5
   lookSensitivity: 1
 --- !u!143 &2115216171671767547
 CharacterController:

@@ -51,7 +51,7 @@ public class CrouchingState : InputMoveState
     {
         base.CheckTransitions();
         
-        if(!stateMachine.InputController.IsCrouching && CanStandUp())
+        if(!stateMachine.InputController.CrouchHeld && CanStandUp())
             SwitchState(stateMachine.WalkingState);
     }
     

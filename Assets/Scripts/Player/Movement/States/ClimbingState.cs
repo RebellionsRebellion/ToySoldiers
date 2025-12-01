@@ -427,7 +427,7 @@ public class ClimbingState : MovementState
         var climbState = GetClimbState();
         // If they crouch or can no longer climb
         if (
-            (stateMachine.InputController.IsCrouching) || 
+            (stateMachine.InputController.CrouchDown) || 
              (CantClimb(climbState) && !isVaulting && climbTimer > Settings.ClimbingStartLockIntoPlace)
             )
         {

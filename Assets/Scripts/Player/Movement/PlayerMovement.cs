@@ -305,6 +305,13 @@ public class PlayerMovement : StateMachine
 
     }
     
+    public bool IsFacingWall(float distance = 1f)
+    {
+        Vector3 origin = Position + Vector3.up * PlayerHeight/2;
+        Vector3 direction = Forward;
+        return Physics.Raycast(origin, Forward, distance, EnvironmentLayer);
+    }
+    
     public float GetGroundDistance()
     {
         float sphereRadius = cc.radius * 0.9f;
