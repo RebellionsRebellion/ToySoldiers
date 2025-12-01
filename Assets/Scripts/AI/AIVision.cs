@@ -19,6 +19,10 @@ public class AIVision : MonoBehaviour
     
     [HideInInspector] public Vector3 lastSeenPosition;
 
+    [HideInInspector] public float lastSeenTime;
+    [SerializeField] private float searchTimeout = 20f;
+    public float SearchTimeout => searchTimeout; 
+
     void Start()
     {
         visionCollider = GetComponent<SphereCollider>();
@@ -35,6 +39,7 @@ public class AIVision : MonoBehaviour
         {
             return;
         }
+        
         // Calculates direction to the player
         Vector3 direction = (player.position - transform.position).normalized;
         // Which is then used to calculate the angle between the AI forwards and the players direction
@@ -57,6 +62,7 @@ public class AIVision : MonoBehaviour
                 {
                     canSeePlayer = true;
                     lastSeenPosition = player.position;
+                    lastSeenTime = Time.time;
                 }
                 return;
             }

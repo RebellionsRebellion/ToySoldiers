@@ -20,8 +20,6 @@ public class SearchState : AIState
         { 
             agent.isStopped = true;
             timer += Time.deltaTime;
-            float angle = Mathf.Sin(timer * 1.5f) * 45f;
-            controller.transform.rotation = Quaternion.Euler(0f, angle, 0f);
         }
 
         if (timer >= searchTime)

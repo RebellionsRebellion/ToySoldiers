@@ -26,14 +26,17 @@ public class AIStateMachine : MonoBehaviour
     {
         currentState?.Execute();
         // if player enters vision collider, switch to attack state
-        if (vision.canSeePlayer && !(currentState is AttackState))
+        if (vision.canSeePlayer && !(currentState is AttackState) && !(currentState is MoveToCoverState) && !(currentState is BehindCoverState) && !(currentState is PeekShootState))
         { 
             ChangeState(new AttackState(this, agent, vision.player));
         }
         // else if cant see player and is in attack state, switch to search state
-        else if (!vision.canSeePlayer && currentState is AttackState)
+        else if (!vision.canSeePlayer && (currentState is AttackState || currentState is MoveToCoverState || currentState is BehindCoverState || currentState is PeekShootState))
         {
-            ChangeState(new SearchState(this, agent, vision.lastSeenPosition));
+            if (Time.time - vision.lastSeenTime > vision.SearchTimeout)
+            {
+                ChangeState(new SearchState(this, agent, vision.lastSeenPosition));
+            }
         }
     }
 
@@ -44,6 +47,18 @@ public class AIStateMachine : MonoBehaviour
         {
             CommanderController commander = GetComponent<CommanderController>();
             commander.hasGroupedUp = false;
+        }
+
+        if (currentState is MoveToCoverState || currentState is BehindCoverState || currentState is PeekShootState && !(newState is MoveToCoverState || newState is BehindCoverState || newState is PeekShootState))
+        {
+            CoverPoint[] points = FindObjectsOfType<CoverPoint>();
+            foreach (CoverPoint point in points)
+            {
+                if (point.aiStateMachine == this)
+                {
+                    point.LeaveCoverPoint();
+                }
+            }
         }
         currentState = newState;
     }
@@ -71,6 +86,15 @@ public class AIStateMachine : MonoBehaviour
             if (commander != null)
             {
                 followerCommander.Followers.Remove(this);
+            }
+        }
+        
+        CoverPoint[] points = FindObjectsOfType<CoverPoint>();
+        foreach (CoverPoint point in points)
+        {
+            if (point.aiStateMachine == this)
+            {
+                point.LeaveCoverPoint();
             }
         }
 
