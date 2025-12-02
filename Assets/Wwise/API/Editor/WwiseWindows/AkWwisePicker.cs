@@ -106,6 +106,8 @@ public class AkWwisePicker : UnityEditor.EditorWindow
 	{
 		AkWwiseProjectInfo.DataSourceType ds;
 		var buttonWidth = 150;
+		string wwiseInstallationPath = "";
+
 		using (new UnityEngine.GUILayout.HorizontalScope("box"))
 		{
 			ds = (AkWwiseProjectInfo.DataSourceType)UnityEditor.EditorGUILayout.EnumPopup(
@@ -147,17 +149,22 @@ public class AkWwisePicker : UnityEditor.EditorWindow
 			if (UnityEngine.GUILayout.Button("Generate SoundBanks", UnityEngine.GUILayout.Width(buttonWidth)))
 			{
 #if UNITY_EDITOR_WIN
-				string wwiseInstallationPath = AkWwiseEditorSettings.Instance.WwiseInstallationPathWindows;
+				if(AkWwiseEditorSettings.Instance.WwiseInstallationPathWindows != null)
+					wwiseInstallationPath = AkWwiseEditorSettings.Instance.WwiseInstallationPathWindows;
 #elif UNITY_EDITOR_OSX
-				string wwiseInstallationPath = AkWwiseEditorSettings.Instance.WwiseInstallationPathMac;
+				if(AkWwiseEditorSettings.Instance.WwiseInstallationPathMac != null)
+					wwiseInstallationPath = AkWwiseEditorSettings.Instance.WwiseInstallationPathMac;
 #endif
-				if (AkUtilities.IsSoundbankGenerationAvailable(wwiseInstallationPath))
+				if(!string.IsNullOrEmpty(wwiseInstallationPath))
 				{
-					AkUtilities.GenerateSoundbanks(wwiseInstallationPath, AkWwiseEditorSettings.WwiseProjectAbsolutePath);
-				}
-				else if(!AkUtilities.GeneratingSoundBanks)
-				{
-					UnityEngine.Debug.LogError("Access to Wwise is required to generate the SoundBanks. Please go to Edit > Project Settings... and set the Wwise Application Path found in the Wwise Integration view.");
+					if (AkUtilities.IsSoundbankGenerationAvailable(wwiseInstallationPath))
+					{
+						AkUtilities.GenerateSoundbanks(wwiseInstallationPath, AkWwiseEditorSettings.WwiseProjectAbsolutePath);
+					}
+					else if(!AkUtilities.GeneratingSoundBanks)
+					{
+						UnityEngine.Debug.LogError("Access to Wwise is required to generate the SoundBanks. Please go to Edit > Project Settings... and set the Wwise Application Path found in the Wwise Integration view.");
+					}
 				}
 			}
 
