@@ -2,10 +2,43 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInputController : MonoBehaviour
+public class InputManager : MonoBehaviour
 {
+    public static InputManager Instance { get; private set; }
+
     [SerializeField] private InputActionAsset inputActions;
+
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        LoadInputActions();
+    }
     
+    private void LoadInputActions()
+    {
+        // Enable all action maps
+        foreach (var map in inputActions.actionMaps)
+        {
+            map.Enable();
+        }
+    }
+
+    private void LateUpdate()
+    {
+        PlayerInputsEndFrame();
+    }
+
+    #region PlayerInput
     public Vector2 FrameMove { get; private set; }
     public Vector2 FrameLook { get; private set; }
     public bool JumpDown { get; private set; }
@@ -22,21 +55,7 @@ public class PlayerInputController : MonoBehaviour
     public bool IsReloading { get; private set; }
     public Action OnReloadAction;
 
-    private void Awake()
-    {
-        LoadInputActions();
-    }
-    
-    private void LoadInputActions()
-    {
-        // Enable all action maps
-        foreach (var map in inputActions.actionMaps)
-        {
-            map.Enable();
-        }
-    }
-
-    private void LateUpdate()
+    private void PlayerInputsEndFrame()
     {
         previousJumpHeld = JumpHeld;
         previousCrouchHeld = CrouchHeld;
@@ -44,7 +63,8 @@ public class PlayerInputController : MonoBehaviour
         JumpDown = false;
         CrouchDown = false;
     }
-    
+
+
     private void OnMove(InputValue inputValue)
     {
         FrameMove = inputValue.Get<Vector2>();
@@ -101,4 +121,14 @@ public class PlayerInputController : MonoBehaviour
         if(IsReloading && OnReloadAction != null)
             OnReloadAction.Invoke();
     }
+    #endregion
+
+    #region UIInput
+    public bool PauseDown { get; private set; }
+
+    private void OnPause(InputValue inputValue)
+    {
+        PauseDown = inputValue.isPressed;
+    }
+    #endregion
 }
