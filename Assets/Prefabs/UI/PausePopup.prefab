@@ -789,7 +789,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42b70373f58aafe43af0cca1b2ef6eaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputTrigger
-  input: {fileID: 4338823885238156222, guid: 38175887ad7fc6842a3398173db22a58, type: 3}
+  input: {fileID: -17298015979715627, guid: 38175887ad7fc6842a3398173db22a58, type: 3}
   onInputDown:
     m_PersistentCalls:
       m_Calls:
