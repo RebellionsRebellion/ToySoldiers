@@ -3,14 +3,15 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using PrimeTween;
 using TMPro;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class AnimateSelectable : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, ISelectHandler, IDeselectHandler, ISubmitHandler
 {
     
     [Header("Components")]
-    [SerializeField] private RectTransform rectTransform;
-    [SerializeField] private Image buttonImage;
+    [SerializeField] private RectTransform selectableTransform;
+    [SerializeField] private Image selectableImage;
     [SerializeField] private Selectable selectable;
     //[SerializeField] private AudioEventSO confirmSound;
 
@@ -19,11 +20,11 @@ public class AnimateSelectable : MonoBehaviour, IPointerDownHandler, IPointerUpH
     [SerializeField, ShowField(nameof(animateScale))] private float hoverScale = 1.1f;
     [SerializeField, ShowField(nameof(animateScale))] private float scaleInLength = 0.1f;
     [SerializeField, ShowField(nameof(animateScale))] private float scaleOutLength = 0.2f;
-    [SerializeField] private bool animatePosition;
+    [SerializeField] private bool animateColor;
     [SerializeField, ShowField(nameof(animateColor))] private Color hoverButtonColor;
     [SerializeField, ShowField(nameof(animateColor))] private float colorInLength = 0.1f;
     [SerializeField, ShowField(nameof(animateColor))] private float colorOutLength = 0.4f;
-    [SerializeField] private bool animateColor;
+    [SerializeField] private bool animatePosition;
     [SerializeField, ShowField(nameof(animatePosition))] private Vector3 hoverOffset;
     [SerializeField, ShowField(nameof(animatePosition))] private float hoverInLength = 0.1f;
     [SerializeField, ShowField(nameof(animatePosition))] private float hoverOutLength = 0.2f;
@@ -48,10 +49,10 @@ public class AnimateSelectable : MonoBehaviour, IPointerDownHandler, IPointerUpH
     {
         init = true;
         
-        if(buttonImage)
-            buttonColor = buttonImage.color;
-        buttonScale = rectTransform.localScale;
-        buttonOffset = rectTransform.localPosition;
+        if(selectableImage)
+            buttonColor = selectableImage.color;
+        buttonScale = selectableTransform.localScale;
+        buttonOffset = selectableTransform.localPosition;
         if (buttonText)
             defaultTextColor = buttonText.color;
         
@@ -108,22 +109,22 @@ public class AnimateSelectable : MonoBehaviour, IPointerDownHandler, IPointerUpH
             return;
         
         
-        if(animateColor && buttonImage)
+        if(animateColor && selectableImage)
         {
             colorTween.Stop();
-            Tween.Color(buttonImage, hoverButtonColor, colorInLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
+            Tween.Color(selectableImage, hoverButtonColor, colorInLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
         }
 
         if (animateScale)
         {
             scaleTween.Stop();
-            Tween.Scale(rectTransform, buttonScale * hoverScale, scaleInLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
+            Tween.Scale(selectableTransform, buttonScale * hoverScale, scaleInLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
         }
         
         if (animatePosition)
         {
             offsetTween.Stop();
-            Tween.LocalPosition(rectTransform, buttonOffset + hoverOffset, hoverInLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
+            Tween.LocalPosition(selectableTransform, buttonOffset + hoverOffset, hoverInLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
         }
         
         if (animateTextColor && buttonText)
@@ -143,22 +144,22 @@ public class AnimateSelectable : MonoBehaviour, IPointerDownHandler, IPointerUpH
         if (!init)
             return;
         
-        if(animateColor && buttonImage)
+        if(animateColor && selectableImage)
         {
             colorTween.Stop();
-            Tween.Color(buttonImage, buttonColor, colorOutLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
+            Tween.Color(selectableImage, buttonColor, colorOutLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
         }
 
         if (animateScale)
         {
             scaleTween.Stop();
-            Tween.Scale(rectTransform, buttonScale, scaleOutLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
+            Tween.Scale(selectableTransform, buttonScale, scaleOutLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
         }
         
         if (animatePosition)
         {
             offsetTween.Stop();
-            Tween.LocalPosition(rectTransform, buttonOffset, hoverOutLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
+            Tween.LocalPosition(selectableTransform, buttonOffset, hoverOutLength, Ease.Default, 1, CycleMode.Restart, 0f, 0f, true);
         }
         
         if (animateTextColor && buttonText)

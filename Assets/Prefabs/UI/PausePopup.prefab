@@ -321,17 +321,17 @@ MonoBehaviour:
     disableCanvas: 0
   firstSelected: {fileID: 0}
   findFirstSelectedInChildren: 0
-  tabImage: {fileID: 786004701628323878}
+  tabImage: {fileID: 2880950687994783525}
   tabText: {fileID: 0}
   unselectedTextAlpha: 0.5
   OnSelectTab:
     m_PersistentCalls:
       m_Calls: []
-  selectType: 0
+  selectType: 2
   unselectedImage: {fileID: 0}
   selectedImage: {fileID: 0}
-  unselectedColor: {r: 0, g: 0, b: 0, a: 1}
-  selectedColor: {r: 1, g: 1, b: 1, a: 1}
+  unselectedColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0.5345911, g: 0.5345911, b: 0.5345911, a: 1}
   unselectedAlpha: 0
   selectedAlpha: 1
 --- !u!114 &5447387886559168543
@@ -390,19 +390,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f0f5780e6fa5bd48bfe6f3ced6dfd13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimateSelectable
-  rectTransform: {fileID: 5405607280149812026}
-  buttonImage: {fileID: 2880950687994783525}
+  selectableTransform: {fileID: 5405607280149812026}
+  selectableImage: {fileID: 2880950687994783525}
   selectable: {fileID: 5447387886559168543}
   animateScale: 1
   hoverScale: 1.1
   scaleInLength: 0.1
   scaleOutLength: 0.2
-  animatePosition: 0
+  animatePosition: 1
   hoverButtonColor: {r: 0, g: 0, b: 0, a: 0}
   colorInLength: 0.1
   colorOutLength: 0.4
   animateColor: 0
-  hoverOffset: {x: 0, y: 0, z: 0}
+  hoverOffset: {x: 0, y: 10, z: 0}
   hoverInLength: 0.1
   hoverOutLength: 0.2
   animateTextColor: 0
@@ -711,17 +711,17 @@ MonoBehaviour:
     disableCanvas: 0
   firstSelected: {fileID: 0}
   findFirstSelectedInChildren: 0
-  tabImage: {fileID: 6091856435663442154}
+  tabImage: {fileID: 1560052112278128194}
   tabText: {fileID: 0}
   unselectedTextAlpha: 0.5
   OnSelectTab:
     m_PersistentCalls:
       m_Calls: []
-  selectType: 0
+  selectType: 2
   unselectedImage: {fileID: 0}
   selectedImage: {fileID: 0}
-  unselectedColor: {r: 0, g: 0, b: 0, a: 1}
-  selectedColor: {r: 1, g: 1, b: 1, a: 1}
+  unselectedColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0.53333336, g: 0.53333336, b: 0.53333336, a: 1}
   unselectedAlpha: 0
   selectedAlpha: 1
 --- !u!114 &2677875766423839408
@@ -780,19 +780,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f0f5780e6fa5bd48bfe6f3ced6dfd13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimateSelectable
-  rectTransform: {fileID: 6707968883520111755}
-  buttonImage: {fileID: 1560052112278128194}
+  selectableTransform: {fileID: 0}
+  selectableImage: {fileID: 0}
   selectable: {fileID: 2677875766423839408}
   animateScale: 1
   hoverScale: 1.1
   scaleInLength: 0.1
   scaleOutLength: 0.2
-  animatePosition: 0
+  animatePosition: 1
   hoverButtonColor: {r: 0, g: 0, b: 0, a: 0}
   colorInLength: 0.1
   colorOutLength: 0.4
   animateColor: 0
-  hoverOffset: {x: 0, y: 0, z: 0}
+  hoverOffset: {x: 0, y: 10, z: 0}
   hoverInLength: 0.1
   hoverOutLength: 0.2
   animateTextColor: 0
@@ -887,7 +887,7 @@ MonoBehaviour:
   backgroundPanel: {fileID: 4760008849835991159}
   firstSelectedRoot: {fileID: 0}
   findFirstSelectedInChildren: 0
-  tabManager: {fileID: 0}
+  tabManager: {fileID: 8125941894963478170}
   fadeInTime: 0.25
   fadeInEase: 0
   fadeOutTime: 0.25
