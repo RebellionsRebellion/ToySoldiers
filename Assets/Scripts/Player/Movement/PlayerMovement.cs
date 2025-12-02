@@ -15,8 +15,6 @@ public class PlayerMovement : StateMachine
     private CapsuleCollider col;
     
     [Header("Components")]
-    [SerializeField] private InputManager inputController;
-    public InputManager InputController => inputController;
     [SerializeField] private Animator playerAnimator;
     public Animator PlayerAnimator => playerAnimator;
     [SerializeField] private Transform thirdPersonTracker;
@@ -32,6 +30,8 @@ public class PlayerMovement : StateMachine
     public Vector3 Forward => rotationRoot.forward;
     public Vector3 Right => rotationRoot.right;
     public Vector3 Up => rotationRoot.up;
+    public InputManager InputController => InputManager.Instance;
+
 
     [Header("Attributes")] 
     [Tooltip("Height of the player character, used in things like climbing checks")]
@@ -247,7 +247,7 @@ public class PlayerMovement : StateMachine
 
     private void FrameLook()
     {
-        Vector2 input = inputController.FrameLook;
+        Vector2 input = InputManager.Instance.FrameLook;
         
         Vector2 finalInput = input * (lookSensitivity * Time.deltaTime);
         

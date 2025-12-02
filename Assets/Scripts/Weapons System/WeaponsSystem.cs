@@ -8,8 +8,6 @@ using Random = UnityEngine.Random;
 public class WeaponsSystem : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("Reference to input logic")]
-    [SerializeField] private InputManager playerInputController;
     [Tooltip("Player camera used for the obstruction check")]
     [SerializeField] private Camera playerCamera;   // player camera used for the obstruction check
     [FormerlySerializedAs("playerLayer")]
@@ -40,13 +38,13 @@ public class WeaponsSystem : MonoBehaviour
     private void OnEnable()
     {
 //        playerInputController.OnShootAction += Fire;
-        playerInputController.OnReloadAction += Reload;
+        InputManager.Instance.OnReloadAction += Reload;
     }
 
     private void OnDisable()
     {
-//        playerInputController.OnShootAction -= Fire;
-        playerInputController.OnReloadAction -= Reload;
+        //        playerInputController.OnShootAction -= Fire;
+        InputManager.Instance.OnReloadAction -= Reload;
     }
 
     private void Start()
@@ -59,7 +57,7 @@ public class WeaponsSystem : MonoBehaviour
     private void Update()
     {
         // TODO: use events this is temp due to it not working for unknown reason
-        if (playerInputController.IsShooting)
+        if (InputManager.Instance.IsShooting)
         {
             Fire();
         }
