@@ -397,11 +397,11 @@ MonoBehaviour:
   hoverScale: 1.1
   scaleInLength: 0.1
   scaleOutLength: 0.2
-  animatePosition: 1
+  animateColor: 0
   hoverButtonColor: {r: 0, g: 0, b: 0, a: 0}
   colorInLength: 0.1
   colorOutLength: 0.4
-  animateColor: 0
+  animatePosition: 1
   hoverOffset: {x: 0, y: 10, z: 0}
   hoverInLength: 0.1
   hoverOutLength: 0.2
@@ -780,18 +780,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f0f5780e6fa5bd48bfe6f3ced6dfd13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimateSelectable
-  selectableTransform: {fileID: 0}
-  selectableImage: {fileID: 0}
+  selectableTransform: {fileID: 6707968883520111755}
+  selectableImage: {fileID: 1560052112278128194}
   selectable: {fileID: 2677875766423839408}
   animateScale: 1
   hoverScale: 1.1
   scaleInLength: 0.1
   scaleOutLength: 0.2
-  animatePosition: 1
+  animateColor: 0
   hoverButtonColor: {r: 0, g: 0, b: 0, a: 0}
   colorInLength: 0.1
   colorOutLength: 0.4
-  animateColor: 0
+  animatePosition: 1
   hoverOffset: {x: 0, y: 10, z: 0}
   hoverInLength: 0.1
   hoverOutLength: 0.2
@@ -899,10 +899,10 @@ MonoBehaviour:
   moveOutDistance: 100
   moveOutTime: 0.25
   moveOutEase: 0
-  dimFadeInTime: 0.2
-  dimFadeInEase: 0
-  dimFadeOutTime: 0.2
-  dimFadeOutEase: 0
+  backgroundFadeInTime: 0.2
+  backgroundFadeInEase: 0
+  backgroundFadeOutTime: 0.2
+  backgroundFadeOutEase: 0
   disableGameObjectWhenClosed: 0
   moveSide: 1
   freezeTimeScale: 0

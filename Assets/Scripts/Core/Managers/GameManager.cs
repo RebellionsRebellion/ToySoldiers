@@ -1,16 +1,57 @@
+using EditorAttributes;
+using PrimeTween;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public bool Ingame { get; private set; }
+    
+    #region Singleton
+    public static GameManager Instance { get; private set; }
+    private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            Instance = this;
+        }
+        DontDestroyOnLoad(this.gameObject);
         
+        Init();
+    }
+    #endregion
+
+    private void Init()
+    {
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+        PrimeTweenConfig.warnTweenOnDisabledTarget = false;
+        PrimeTweenConfig.warnZeroDuration = false;
+    }
+    [Button]
+    public void LoadGame()
+    {
+        TransitionManager.TransitionScene(TransitionManager.SceneTypes.Ingame, StartGame);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void StartGame()
     {
+        Ingame = true;
         
+        print("Game Started");
     }
+    [Button]
+    public void EndGame()
+    {
+        Ingame = false;
+        
+        print("Game Ended");
+        
+        TransitionManager.TransitionScene(TransitionManager.SceneTypes.MainMenu);
+
+    }
+    
 }
