@@ -22,6 +22,9 @@ public class AIWeaponSystem : MonoBehaviour
     [HideInInspector] public Transform target;
     private AIInventory aiInventory;
 
+    [Tooltip("Damage multiplier for enemy weapons")]
+    [SerializeField] private float damageMult = 0.5f;
+
     private void Start()
     {
         aiInventory = GetComponent<AIInventory>();
@@ -35,14 +38,12 @@ public class AIWeaponSystem : MonoBehaviour
         if(Time.time - lastReloadTime < currentWeapon.WeaponData.ReloadTime)
         {
             // am still reloading
-            Debug.Log("Still reloading!");
             return;
         }
 
         if(currentWeapon.CurrentAmmoInMag <= 0)
         {
             // play empty mag sound here
-            Debug.Log("No ammo in mag!");
             Reload();
             return;
         }
@@ -51,11 +52,9 @@ public class AIWeaponSystem : MonoBehaviour
         float timeBetweenShots = 60f / currentWeapon.WeaponData.FireRateRPM;
         if(Time.time - lastShotTime < timeBetweenShots)
         {
-            Debug.Log("Shooting too fast!");
             return;
         }
 
-        Debug.Log("Firing weapon: " + currentWeapon.WeaponData.DisplayName);
         
         // do the actual shooting here
         if(currentWeapon.WeaponData.IsPhysicsBased)
@@ -97,7 +96,7 @@ public class AIWeaponSystem : MonoBehaviour
         {
             if (hit.collider.CompareTag("Player"))
             {
-                hit.collider.GetComponent<PlayerHealth>().TakeDamage(currentWeapon.WeaponData.Damage);
+                hit.collider.GetComponent<PlayerHealth>().TakeDamage(currentWeapon.WeaponData.Damage * damageMult);
             }
         }
 

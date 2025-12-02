@@ -9,7 +9,11 @@ public class AIStateMachine : MonoBehaviour
     
     [Tooltip("Set waypoints by creating empty game objects in the scene, then setting their transform to the waypoint.")]
     [SerializeField] private List<Transform> waypoints;
+
+    [Tooltip("Assign the enemy you want this enemy to follow here")]
     public Transform commander;
+
+    [Tooltip("Assign the X and Z values here for offsets from the commander position. (Y value is actually Z)")]
     public Vector2 formationOffset;
     [HideInInspector] public int currentWaypoint; 
     [HideInInspector] public AIVision vision;

@@ -123,7 +123,6 @@ public class Weapon
         if (availableAmmo <= 0)
         {
             // no ammo left at all! play a sound or something
-            Debug.Log("No ammo left to reload!");
             return;
         }
 
@@ -131,31 +130,10 @@ public class Weapon
         if (availableAmmo >= WeaponData.MagSize)
         {
             CurrentAmmoInMag = WeaponData.MagSize;
-
-            if (WeaponData.SpecialAmmo)
-            {
-                aiInventory.AdjustSpecialAmmoCount(-WeaponData.MagSize);;
-            }
-            else
-            {
-                aiInventory.AdjustNormalAmmoCount(-WeaponData.MagSize);
-            }
-            Debug.Log("Reloaded full mag");
         }
         else
         {
             CurrentAmmoInMag = availableAmmo;
-
-            if (WeaponData.SpecialAmmo)
-            {
-                aiInventory.SetSpecialAmmoCount(0);
-            }
-            else
-            {
-                aiInventory.SetNormalAmmoCount(0);
-            }
-
-            Debug.Log("Reloaded partial mag");
         }
     }
     
