@@ -9,7 +9,7 @@ public class WeaponsSystem : MonoBehaviour
 {
     [Header("References")]
     [Tooltip("Reference to input logic")]
-    [SerializeField] private PlayerInputController playerInputController;
+    [SerializeField] private InputManager playerInputController;
     [Tooltip("Player camera used for the obstruction check")]
     [SerializeField] private Camera playerCamera;   // player camera used for the obstruction check
     [FormerlySerializedAs("playerLayer")]

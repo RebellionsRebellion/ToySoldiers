@@ -15,8 +15,8 @@ public class PlayerMovement : StateMachine
     private CapsuleCollider col;
     
     [Header("Components")]
-    [SerializeField] private PlayerInputController inputController;
-    public PlayerInputController InputController => inputController;
+    [SerializeField] private InputManager inputController;
+    public InputManager InputController => inputController;
     [SerializeField] private Animator playerAnimator;
     public Animator PlayerAnimator => playerAnimator;
     [SerializeField] private Transform thirdPersonTracker;
