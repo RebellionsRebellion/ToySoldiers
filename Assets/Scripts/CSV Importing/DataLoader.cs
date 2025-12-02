@@ -40,6 +40,9 @@ public class DataLoader
             weaponData.ShotQuantity = int.Parse(columns[11]);
             weaponData.ShotSpread = float.Parse(columns[12]);
             weaponData.IsPhysicsBased = bool.Parse(columns[13]);
+            weaponData.InitialVelocityMS = float.Parse(columns[14]);
+            weaponData.MassKG = float.Parse(columns[15]);
+            weaponData.Attachments = columns[16].Split(',');    // same as fire modes
 
             // save as an asset in the project so it can be referenced
             string assetPath = $"Assets/ScriptableObjects/Weapons/{weaponData.ClassName}.asset";
