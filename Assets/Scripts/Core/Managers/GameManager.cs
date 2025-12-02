@@ -1,3 +1,4 @@
+using System;
 using EditorAttributes;
 using PrimeTween;
 using UnityEngine;
@@ -24,6 +25,24 @@ public class GameManager : MonoBehaviour
         Init();
     }
     #endregion
+    
+    [Header("References")]
+    [SerializeField] private IngameStats ingameStats;
+
+    [Header("Event Binding")] 
+    [SerializeField] private VoidEventChannelSO onLoadGame;
+    
+    [Header("Event Triggering")]
+    [SerializeField] private FloatEventChannelSO onTimePassed;
+
+    private void OnEnable()
+    {
+        onLoadGame.OnEventRaised += LoadGame;
+    }
+    private void OnDisable()
+    {
+        onLoadGame.OnEventRaised -= LoadGame;
+    }
 
     private void Init()
     {
@@ -31,6 +50,19 @@ public class GameManager : MonoBehaviour
         PrimeTweenConfig.warnTweenOnDisabledTarget = false;
         PrimeTweenConfig.warnZeroDuration = false;
     }
+
+
+    private void Update()
+    {
+        if(Ingame)
+            IngameTick();
+    }
+    
+    private void IngameTick()
+    {
+        onTimePassed?.Invoke(Time.deltaTime);
+    }
+
     [Button]
     public void LoadGame()
     {
@@ -41,12 +73,16 @@ public class GameManager : MonoBehaviour
     {
         Ingame = true;
         
+        ingameStats.Start();
+        
         print("Game Started");
     }
     [Button]
     public void EndGame()
-    {
+    { 
         Ingame = false;
+        
+        ingameStats.Stop();
         
         print("Game Ended");
         
