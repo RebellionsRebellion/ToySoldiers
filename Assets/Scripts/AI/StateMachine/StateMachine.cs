@@ -6,6 +6,7 @@ public class AIStateMachine : MonoBehaviour
 {
     [HideInInspector] public NavMeshAgent agent;
     private AIState currentState;
+    public AIState CurrentState => currentState;
     
     [Tooltip("Set waypoints by creating empty game objects in the scene, then setting their transform to the waypoint.")]
     [SerializeField] private List<Transform> waypoints;
@@ -17,12 +18,15 @@ public class AIStateMachine : MonoBehaviour
     public Vector2 formationOffset;
     [HideInInspector] public int currentWaypoint; 
     [HideInInspector] public AIVision vision;
+    private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
+    private AIController aiController;
 
     // Sets starting states for AI 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         vision = GetComponent<AIVision>();
+        aiController = GetComponent<AIController>();
         ReturnToStartingState();
     }
 
@@ -39,6 +43,7 @@ public class AIStateMachine : MonoBehaviour
         {
             if (Time.time - vision.lastSeenTime > vision.SearchTimeout)
             {
+                aiController.AIAnimator.SetBool(IsCrouching, false);
                 ChangeState(new SearchState(this, agent, vision.lastSeenPosition));
             }
         }

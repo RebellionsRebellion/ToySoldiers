@@ -7,19 +7,21 @@ public class PeekShootState : AIState
     private AIWeaponSystem weaponSystem;
     private CoverPoint coverPoint;
     // time before returning to cover
-    private float shootDuration = 2f;
+    private float peekDuration = 4f;
     private float timer;
     private Vector3 coverPosition;
     // direction to move to peek around cover
     private Vector3 moveDirection;
-    private float stepSize = 0.1f;
+    private float stepSize = 1f;
     private float sampleRadius = 10f;
+    private AIController aiController;
 
     public PeekShootState(AIStateMachine controller, NavMeshAgent agent, CoverPoint coverPoint, Transform player) : base(controller, agent)
     {
         this.coverPoint = coverPoint;
         this.player = player;
         weaponSystem = controller.GetComponentInChildren<AIWeaponSystem>();
+        aiController = controller.GetComponent<AIController>();
         
         coverPosition = coverPoint.transform.position;
         Vector3 directionToPlayer = (player.position - coverPosition).normalized;
@@ -33,44 +35,59 @@ public class PeekShootState : AIState
     public override void Execute()
     {
         agent.isStopped = false;
-        
-        if (!HasLineOfSight())
+        timer += Time.deltaTime;
+        if (timer >= peekDuration)
         {
-            // Moves enemy towards target position, 
-            Vector3 targetPosition = controller.transform.position + moveDirection * stepSize;
-            if (NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, sampleRadius, NavMesh.AllAreas))
+            weaponSystem.Reload();
+            controller.ChangeState(new BehindCoverState(controller, agent, coverPoint, player));
+            return;
+        }
+
+        if (!coverPoint.IsStandingCover)
+        {
+            aiController.SetCrouching(false);
+            if (HasLineOfSight())
             {
-                agent.SetDestination(hit.position);
+                RotateTowardsPlayer();
+                weaponSystem.target = player;
+                weaponSystem.Fire();
             }
-            else
+
+            return;
+        }
+
+        if (coverPoint.IsStandingCover)
+        {
+            if (!HasLineOfSight())
             {
-                // if first direction fails, try other direction
-                Vector3 opposite = controller.transform.position - moveDirection * stepSize;
-                if (NavMesh.SamplePosition(opposite, out hit, sampleRadius, NavMesh.AllAreas))
+                // Moves enemy towards target position, 
+                Vector3 targetPosition = controller.transform.position + moveDirection * stepSize;
+                if (NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, sampleRadius, NavMesh.AllAreas))
                 {
                     agent.SetDestination(hit.position);
                 }
                 else
                 {
-                    // when both direction don't work
-                    agent.isStopped = true;
+                    // if first direction fails, try other direction
+                    Vector3 opposite = controller.transform.position - moveDirection * stepSize;
+                    if (NavMesh.SamplePosition(opposite, out hit, sampleRadius, NavMesh.AllAreas))
+                    {
+                        agent.SetDestination(hit.position);
+                    }
+                    else
+                    {
+                        // when both direction don't work
+                        agent.isStopped = true;
+                    }
                 }
             }
-        }
-        else
-        {
-            // enemy has line of sight on player, so will shoot
-            agent.isStopped = true;
-            Vector3 lookDirection = (player.position - controller.transform.position).normalized;
-            lookDirection.y = 0;
-            controller.transform.rotation = Quaternion.LookRotation(lookDirection);
-            weaponSystem.target = player;
-            weaponSystem.Fire();
-            timer += Time.deltaTime;
-            // goes back to cover state after shooting for a period of time
-            if (timer >= shootDuration)
+            else
             {
-                controller.ChangeState(new BehindCoverState(controller, agent, coverPoint, player));
+                // enemy has line of sight on player, so will shoot
+                agent.isStopped = true;
+                RotateTowardsPlayer();
+                weaponSystem.target = player;
+                weaponSystem.Fire();
             }
         }
     }
@@ -89,6 +106,13 @@ public class PeekShootState : AIState
         }
 
         return false;
+    }
+    
+    private void RotateTowardsPlayer()
+    {
+        Vector3 lookDirection = (player.position - controller.transform.position).normalized;
+        lookDirection.y = 0;
+        controller.transform.rotation = Quaternion.LookRotation(lookDirection);
     }
     
 }

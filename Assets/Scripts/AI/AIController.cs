@@ -20,11 +20,18 @@ public class AIController : MonoBehaviour
     public Animator AIAnimator => aiAnimator;
     private NavMeshAgent navMeshAgent;
     private static readonly int AnimMoveSpeed = Animator.StringToHash("MoveSpeed");
+    private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
+
+    private CapsuleCollider capCollider;
+    private float standHeight = 2f;
+    private float crouchHeight = 1f;
+    private float targetHeight;
 
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         stateMachine = GetComponent<AIStateMachine>();
+        capCollider = GetComponent<CapsuleCollider>();
         currentHealth = maxHealth;
     }
 
@@ -76,5 +83,27 @@ public class AIController : MonoBehaviour
             currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealthRegenerated);
             regenTimer = 0;
         }
+    }
+
+    public void SetCrouching(bool isCrouching)
+    {
+        if (isCrouching)
+        {
+            aiAnimator.SetBool(IsCrouching, true);
+            targetHeight = crouchHeight;
+            Vector3 center = capCollider.center;
+            center.y = targetHeight / 2f;
+            capCollider.center = -center;
+        }
+        else
+        {
+            aiAnimator.SetBool(IsCrouching, false);
+            targetHeight =  standHeight;
+            Vector3 center = capCollider.center;
+            center.y = 0;
+            capCollider.center = center;
+        }
+        capCollider.height = targetHeight;
+        navMeshAgent.height = targetHeight;
     }
 }

@@ -5,6 +5,9 @@ public class CoverPoint : MonoBehaviour
     // is cover point taken?
     [HideInInspector] public bool isTaken = false;
     [HideInInspector] public AIStateMachine aiStateMachine = null;
+    [Tooltip("Set to true if enemy stands up when hiding behind cover, otherwise will crouch")]
+    [SerializeField] private bool standingCover = true;
+    public bool IsStandingCover => standingCover;
 
     void Start()
     {
@@ -37,9 +40,17 @@ public class CoverPoint : MonoBehaviour
         aiStateMachine = null;
     }
 
+    // Cover points shown in scene, for easy placement
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        if (standingCover)
+        {
+            Gizmos.color = Color.red;
+        }
+        else
+        {
+            Gizmos.color = Color.orangeRed;
+        }
         Gizmos.DrawWireSphere(transform.position, 0.5f);
     }
 }

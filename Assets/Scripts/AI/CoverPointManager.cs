@@ -62,7 +62,7 @@ public class CoverPointManager : MonoBehaviour
     // checks if the cover point provides cover from the player
     public bool HasCoverFrom(Transform player, Vector3 fromPoint)
     {
-        Vector3 from = fromPoint + Vector3.up;
+        Vector3 from = fromPoint + Vector3.up * 0.5f;
         Vector3 to = player.position + Vector3.up;
         Vector3 direction = (to - from).normalized;
         float distance = Vector3.Distance(from, to);
