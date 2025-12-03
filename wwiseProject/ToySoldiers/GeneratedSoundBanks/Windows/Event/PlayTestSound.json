@@ -1,0 +1,48 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "154",
+  "SoundBanks": [
+   {
+    "Id": "2260221316",
+    "Type": "Event",
+    "GUID": "{5C9BB3F5-C107-4E6B-B55B-F6A1752BD31B}",
+    "Language": "SFX",
+    "Hash": "{017D1ECF-F232-EB4F-A8D6-403F8CFBA4C8}",
+    "ObjectPath": "PlayTestSound",
+    "ShortName": "PlayTestSound",
+    "Path": "Event/PlayTestSound.bnk",
+    "Media": [
+     {
+      "Id": "367565313",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Loose",
+      "ShortName": "gun-glock-dry-fire.wav",
+      "Path": "Media/367565313.wem",
+      "CachePath": "06/{065F0D5F-CA3B-61C4-0BCC-8C360FCD3F26}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2260221316",
+      "Name": "PlayTestSound",
+      "ObjectPath": "\\Events\\Default Work Unit\\PlayTestSound",
+      "GUID": "{5C9BB3F5-C107-4E6B-B55B-F6A1752BD31B}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.28387755",
+      "DurationMax": "0.28387755",
+      "MediaRefs": [
+       {
+        "Id": "367565313"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{D084EC12-2253-6966-82D3-88128A41AF92}"
+ }
+}

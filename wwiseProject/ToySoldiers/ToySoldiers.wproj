@@ -14,6 +14,7 @@
 				<Language Name="SFX" ID="{EF3A97FE-7823-45C2-A2E7-A1AC72EAD693}" />
 			</LanguageList>
 			<PropertyList>
+				<Property Name="AutoSoundBankEnabled" Type="bool" Value="True" />
 				<Property Name="ExternalSourcesInputPath" Type="string">
 					<ValueList>
 						<Value Platform="Windows"></Value>
@@ -23,12 +24,12 @@
 				</Property>
 				<Property Name="ExternalSourcesOutputPath" Type="string">
 					<ValueList>
-						<Value Platform="Windows">GeneratedSoundBanks\Windows\</Value>
-						<Value Platform="Mac">GeneratedSoundBanks\Mac\</Value>
-						<Value Platform="Linux">GeneratedSoundBanks\Linux\</Value>
+						<Value Platform="Windows">GeneratedSoundBanks\Windows</Value>
+						<Value Platform="Mac">GeneratedSoundBanks\Mac</Value>
+						<Value Platform="Linux">GeneratedSoundBanks\Linux</Value>
 					</ValueList>
 				</Property>
-				<Property Name="SoundBankGenerateEstimatedDuration" Type="bool" Value="True" /><Property Name="SoundBankHeaderFilePath" Type="string" Value="GeneratedSoundBanks\" />
+				<Property Name="SoundBankGenerateEstimatedDuration" Type="bool" Value="True" /><Property Name="SoundBankHeaderFilePath" Type="string" Value="GeneratedSoundBanks" />
 				<Property Name="SoundBankPaths" Type="string">
 					<ValueList>
 						<Value Platform="Windows">GeneratedSoundBanks\Windows\</Value>
@@ -66,6 +67,10 @@
 				</Property>
 				<Property Name="WwiseVersionWhenCreated" Type="string" Value="Branch=wwise_v2024.1.9|Build=8920|VersionName=v2024.1.9|Config=Release" />
 			</PropertyList>
+			<MiscSettings>
+				<MiscSettingEntry Name="Cache"><![CDATA[.cache]]></MiscSettingEntry>
+				<MiscSettingEntry Name="Originals"><![CDATA[Originals]]></MiscSettingEntry>
+			</MiscSettings>
 			<SharedValues>
 				<SharedPropertyList ClassName="AudioFileSource" PluginType="0" CompanyID="1" PluginID="0">
 					<PropertyList>
