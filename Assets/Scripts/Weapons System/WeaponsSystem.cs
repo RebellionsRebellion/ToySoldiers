@@ -10,6 +10,8 @@ public class WeaponsSystem : MonoBehaviour
     [Header("References")]
     [Tooltip("Player camera used for the obstruction check")]
     [SerializeField] private Camera playerCamera;   // player camera used for the obstruction check
+
+    [SerializeField] private PlayerCamera playerCameraSystem;
     [FormerlySerializedAs("playerLayer")]
     [Tooltip("Layer mask to stop the gun from shooting the player torso")]
     [SerializeField] private LayerMask canShoot;
@@ -19,6 +21,7 @@ public class WeaponsSystem : MonoBehaviour
     // internal references
     private PlayerInventory playerInventory => PlayerInventory.Instance;
     [HideInInspector] public Weapon currentWeapon;
+    private PlayerCamera.CameraType weaponCameraType;
     private Crosshair crosshair;
     
     // tracer
@@ -32,6 +35,8 @@ public class WeaponsSystem : MonoBehaviour
     private float lastShotTime = 0;                 // time in seconds since the start of the application when the last shot happened
     private float accumulatedShootingTime = 0f;     // total time spent shooting, used for recovery speed
     private float lastReloadTime = -999f;
+
+    private bool aiming = false;
     
     // weapon instances
 
@@ -60,6 +65,17 @@ public class WeaponsSystem : MonoBehaviour
         if (InputManager.Instance.IsShooting)
         {
             Fire();
+        }
+
+        if (InputManager.Instance.IsAiming && !aiming)
+        {
+            Aim();
+        }
+
+        if (!InputManager.Instance.IsAiming && aiming)
+        {
+            playerCameraSystem.ResetCamera(); 
+            aiming = false;
         }
         
         currentWeapon.WeaponSpread.UpdateSpreadOverTime();
@@ -91,7 +107,7 @@ public class WeaponsSystem : MonoBehaviour
         float timeBetweenShots = 60f / currentWeapon.WeaponData.FireRateRPM;
         if(Time.time - lastShotTime < timeBetweenShots)
         {
-            Debug.Log("Shooting too fast!");
+            // Debug.Log("Shooting too fast!");
             return;
         }
 
@@ -118,6 +134,15 @@ public class WeaponsSystem : MonoBehaviour
         lastShotTime = Time.time;
         
         currentWeapon.Fire();
+    }
+
+    private void Aim()
+    {
+        if (playerCameraSystem.CurrentCameraType != currentWeapon.WeaponData.AimCameraType)
+        {
+            playerCameraSystem.ChangeCamera(currentWeapon.WeaponData.AimCameraType);
+            aiming = true;
+        }
     }
 
     private void Reload()
