@@ -181,7 +181,10 @@ public class WeaponsSystem : MonoBehaviour
         {
             // apply damage if we hit an enemy
             if (hit.collider.CompareTag("Enemy"))
+            {
                 hit.collider.GetComponent<AIController>().TakeDamage(999f);
+                crosshair.Hitmarker();
+            }
         }
 
         // spawn tracer
