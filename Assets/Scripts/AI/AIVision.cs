@@ -30,6 +30,9 @@ public class AIVision : MonoBehaviour
     private bool playerInsideVision = false;
     [Tooltip("Detection drop per second, when out of sight")]
     [SerializeField] private float detectionDrop = 10f;
+    
+    private bool hasAlertedSquad = false;
+    private AIStateMachine aiStateMachine;
 
     void Start()
     {
@@ -49,6 +52,17 @@ public class AIVision : MonoBehaviour
         else
         {
             visibleTimer = Mathf.Clamp(visibleTimer -= Time.deltaTime * detectionDrop, 0, aggressionTime);
+        }
+
+        // Alert the enemies squad
+        if (canSeePlayer)
+        {
+            if (!hasAlertedSquad)
+            { 
+                aiStateMachine = GetComponent<AIStateMachine>();
+                aiStateMachine.AlertSquad(player);
+                hasAlertedSquad = true;
+            }
         }
     }
 

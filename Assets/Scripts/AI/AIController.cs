@@ -26,12 +26,14 @@ public class AIController : MonoBehaviour
     private float standHeight = 2f;
     private float crouchHeight = 1f;
     private float targetHeight;
+    private Transform playerTransform;
 
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         stateMachine = GetComponent<AIStateMachine>();
         capCollider = GetComponent<CapsuleCollider>();
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         currentHealth = maxHealth;
     }
 
@@ -63,6 +65,10 @@ public class AIController : MonoBehaviour
     {
         currentHealth -= damage;
         regenTimerAfterDamage = 0;
+
+        // Alert squad when damaged 
+        stateMachine.AlertSquad(playerTransform);
+        
         if (currentHealth <= 0f)
         {
             stateMachine.Die();
@@ -85,6 +91,7 @@ public class AIController : MonoBehaviour
         }
     }
 
+    // Sets crouching/ standing animation and stats
     public void SetCrouching(bool isCrouching)
     {
         if (isCrouching)

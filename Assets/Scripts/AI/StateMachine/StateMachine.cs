@@ -121,6 +121,45 @@ public class AIStateMachine : MonoBehaviour
             ChangeState(new FollowCommanderState(this, agent, commander, formationOffset));
         }
     }
+    
+    // Alerts enemy squad, setting all of their states to attack, if not already
+    public void AlertSquad(Transform player)
+    {
+        if (commander != null)
+        {
+            CommanderController commanderController = commander.GetComponent<CommanderController>();
+            if (commanderController != null)
+            {
+                // Alerts commander if follower
+                AIStateMachine commanderAI = commanderController.GetComponent<AIStateMachine>();
+                if (commanderAI != null && !(commanderAI.CurrentState is AttackState) && !(commanderAI.CurrentState is MoveToCoverState) && !(commanderAI.CurrentState is BehindCoverState) && !(commanderAI.CurrentState is PeekShootState))
+                {
+                    commanderAI.ChangeState(new AttackState(commanderAI, commanderAI.agent, player));
+                }
+                // Alerts all followers if follower
+                foreach (AIStateMachine follower in commanderController.Followers)
+                {
+                    if (follower != null && !(follower.CurrentState is AttackState) && !(follower.CurrentState is MoveToCoverState) && !(follower.CurrentState is BehindCoverState) && !(follower.CurrentState is PeekShootState))
+                    {
+                        follower.ChangeState(new AttackState(follower, follower.agent, player));
+                    }
+                }
+            }
+        }
+        
+        CommanderController selfCommander = GetComponent<CommanderController>();
+        if (selfCommander != null)
+        {
+            // Alerts all followers if commander
+            foreach (AIStateMachine follower in selfCommander.Followers)
+            {
+                if (follower != null && !(follower.CurrentState is AttackState) && !(follower.CurrentState is MoveToCoverState) && !(follower.CurrentState is BehindCoverState) && !(follower.CurrentState is PeekShootState))
+                {
+                    follower.ChangeState(new AttackState(follower, follower.agent, player));
+                }
+            }
+        }
+    }
 
     public List<Transform> Waypoints
     {
