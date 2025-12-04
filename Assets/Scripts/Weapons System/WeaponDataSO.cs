@@ -56,6 +56,10 @@ public class WeaponDataSO : ScriptableObject
     [Header("Weapon prefab")]
     [Tooltip("A reference to the weapon prefab with its fire point child")]
     public GameObject WeaponPrefab;
+    
+    [Header("Aim type")]
+    [Tooltip("Type of aiming used (scope or aim or whatever)")]
+    public PlayerCamera.CameraType AimCameraType;
 
     public enum FireModes
     {
@@ -85,5 +89,6 @@ public class WeaponDataSO : ScriptableObject
         InitialVelocityMS = other.InitialVelocityMS;
         MassKG = other.MassKG;
         Attachments = other.Attachments;
+        AimCameraType = other.AimCameraType;
     }
 }

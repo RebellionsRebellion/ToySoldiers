@@ -27,6 +27,7 @@ public class PlayerInventory : MonoBehaviour
     public int GetSpecialAmmoCount() => specialAmmoCount;
     private int throwableCount;
     public int GetThrowableCount() => throwableCount;
+    public PlayerCamera.CameraType cameraType;
 
 
     private void Awake()

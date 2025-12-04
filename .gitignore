@@ -104,3 +104,6 @@ ProjectSettings/ShaderGraphSettings.asset
 ProjectSettings/ProjectVersion.txt
 Packages/packages-lock.json
 .vsconfig
+Packages/packages-lock.json
+ProjectSettings/ShaderGraphSettings.asset
+Packages/packages-lock.json

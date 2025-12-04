@@ -8,10 +8,10 @@ using Random = UnityEngine.Random;
 public class WeaponsSystem : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("Reference to input logic")]
-    [SerializeField] private PlayerInputController playerInputController;
     [Tooltip("Player camera used for the obstruction check")]
     [SerializeField] private Camera playerCamera;   // player camera used for the obstruction check
+
+    [SerializeField] private PlayerCamera playerCameraSystem;
     [FormerlySerializedAs("playerLayer")]
     [Tooltip("Layer mask to stop the gun from shooting the player torso")]
     [SerializeField] private LayerMask canShoot;
@@ -21,6 +21,7 @@ public class WeaponsSystem : MonoBehaviour
     // internal references
     private PlayerInventory playerInventory => PlayerInventory.Instance;
     [HideInInspector] public Weapon currentWeapon;
+    private PlayerCamera.CameraType weaponCameraType;
     private Crosshair crosshair;
     
     // tracer
@@ -34,19 +35,21 @@ public class WeaponsSystem : MonoBehaviour
     private float lastShotTime = 0;                 // time in seconds since the start of the application when the last shot happened
     private float accumulatedShootingTime = 0f;     // total time spent shooting, used for recovery speed
     private float lastReloadTime = -999f;
+
+    private bool aiming = false;
     
     // weapon instances
 
     private void OnEnable()
     {
 //        playerInputController.OnShootAction += Fire;
-        playerInputController.OnReloadAction += Reload;
+        InputManager.Instance.OnReloadAction += Reload;
     }
 
     private void OnDisable()
     {
-//        playerInputController.OnShootAction -= Fire;
-        playerInputController.OnReloadAction -= Reload;
+        //        playerInputController.OnShootAction -= Fire;
+        InputManager.Instance.OnReloadAction -= Reload;
     }
 
     private void Start()
@@ -59,9 +62,20 @@ public class WeaponsSystem : MonoBehaviour
     private void Update()
     {
         // TODO: use events this is temp due to it not working for unknown reason
-        if (playerInputController.IsShooting)
+        if (InputManager.Instance.IsShooting)
         {
             Fire();
+        }
+
+        if (InputManager.Instance.IsAiming && !aiming)
+        {
+            Aim();
+        }
+
+        if (!InputManager.Instance.IsAiming && aiming)
+        {
+            playerCameraSystem.ResetCamera(); 
+            aiming = false;
         }
         
         currentWeapon.WeaponSpread.UpdateSpreadOverTime();
@@ -93,7 +107,7 @@ public class WeaponsSystem : MonoBehaviour
         float timeBetweenShots = 60f / currentWeapon.WeaponData.FireRateRPM;
         if(Time.time - lastShotTime < timeBetweenShots)
         {
-            Debug.Log("Shooting too fast!");
+            // Debug.Log("Shooting too fast!");
             return;
         }
 
@@ -120,6 +134,15 @@ public class WeaponsSystem : MonoBehaviour
         lastShotTime = Time.time;
         
         currentWeapon.Fire();
+    }
+
+    private void Aim()
+    {
+        if (playerCameraSystem.CurrentCameraType != currentWeapon.WeaponData.AimCameraType)
+        {
+            playerCameraSystem.ChangeCamera(currentWeapon.WeaponData.AimCameraType);
+            aiming = true;
+        }
     }
 
     private void Reload()
@@ -181,7 +204,10 @@ public class WeaponsSystem : MonoBehaviour
         {
             // apply damage if we hit an enemy
             if (hit.collider.CompareTag("Enemy"))
+            {
                 hit.collider.GetComponent<AIController>().TakeDamage(999f);
+                crosshair.Hitmarker();
+            }
         }
 
         // spawn tracer
