@@ -82,7 +82,9 @@ MonoBehaviour:
   firePoint: {fileID: 4053488350044600270}
   tracerPrefab: {fileID: 1779594140215910652, guid: f4d1a7441a64b8543bc8ae92e32c70f6, type: 3}
   tracerSpeed: 200
+  physicsProjectilePrefab: {fileID: 1779594140215910652, guid: 99236bb3e982031448498db290581e9f, type: 3}
   target: {fileID: 0}
+  damageMult: 0.5
 --- !u!114 &7250935721079204382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,6 +240,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 0
+  healthRegen: 5
+  healthRegenDelay: 8
+  maxHealthRegenerated: 50
   aiAnimator: {fileID: -1253309327186086692}
 --- !u!114 &2453170798943147196
 MonoBehaviour:
@@ -274,6 +279,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 247
   aggressionTime: 1
+  lastSeenPosition: {x: 0, y: 0, z: 0}
+  lastSeenTime: 0
+  searchTimeout: 20
+  detectionDrop: 10
 --- !u!95 &-1253309327186086692
 Animator:
   serializedVersion: 7

@@ -6,7 +6,7 @@ public class FollowCommanderState : AIState
     private Transform commander;
     private Vector2 offset;
     private float catchupDistance = 2f;
-    private float catchupSpeed = 6f;
+    private float catchupSpeed = 3f;
     private float regularSpeed = 2f;
     
     public FollowCommanderState(AIStateMachine controller, NavMeshAgent agent, Transform commander, Vector2 offset) : base(controller, agent)

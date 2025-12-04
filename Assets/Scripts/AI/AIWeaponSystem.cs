@@ -14,6 +14,9 @@ public class AIWeaponSystem : MonoBehaviour
     public GameObject tracerPrefab;   // assign in Inspector
     public float tracerSpeed = 200f;  // only for moving tracers (optional)
     
+    // physics projectile
+    [SerializeField] private GameObject physicsProjectilePrefab;
+    
     // timing values
     private float lastShotTime = 0;                 // time in seconds since the start of the application when the last shot happened
     private float accumulatedShootingTime = 0f;     // total time spent shooting, used for recovery speed
@@ -81,8 +84,26 @@ public class AIWeaponSystem : MonoBehaviour
 
         currentWeapon.EnemyReload(aiInventory);
     }
+    
+    private void DoMultiShoot(bool isPhysicsBased = false)
+    {
+        for (int i = 0; i < currentWeapon.WeaponData.ShotQuantity; i++)
+        {
+            // calculate shot offset rotation
+            float max = currentWeapon.WeaponData.ShotSpread;
+            
+            if (isPhysicsBased)
+            {
+                DoPhysicsShoot(true, Random.Range(-max, max));
+            }
+            else
+            {
+                DoRaycastShoot(true, Random.Range(-max, max));
+            }
+        }
+    }
 
-    private Vector3 DoRaycastShoot()
+    private Vector3 DoRaycastShoot(bool isMultiShot = false, float multiRotation = 0f)
     {
         // Direction to target center
         Vector3 direction = ((target.position + Vector3.up) - firePoint.position).normalized;
@@ -105,13 +126,51 @@ public class AIWeaponSystem : MonoBehaviour
 
 
 
-    private void DoPhysicsShoot()
+    private void DoPhysicsShoot(bool isMultiShot = false, float multiRotation = 0f)
     {
-        // do the actual physics based shoot for rockets etc
+        // do the actual physics based shoot for rockets, arrows etc
+        Vector3 direction = ((target.position + Vector3.up) - firePoint.position).normalized;
+        Vector3 shootDir;
 
-        // shoot ray from camera. Set initial direction of projectile to point at that
+        // multi shot support
+        if (isMultiShot)
+        {
+            Debug.Log("Multi shot rotation");
+            shootDir = GetShotgunRotation(direction, multiRotation);
+        }
+        else
+        {
+            shootDir = direction;
+        }
         
-        // after that use the projectile physics i did for my ballistic system where visually it looks like its effected by gravity etc but its just all raycasts
+        // instantiate and set up the physics projectile
+        GameObject physicsProjectile = Instantiate(physicsProjectilePrefab, firePoint.position, firePoint.rotation);
+        PhysicsBulletMovement movementScript = physicsProjectile.GetComponent<PhysicsBulletMovement>();
+        
+        movementScript.InitialDirection = shootDir;
+        movementScript.InitialVelocity = currentWeapon.WeaponData.InitialVelocityMS;
+        movementScript.Damage = currentWeapon.WeaponData.Damage;
+        movementScript.MassKG = currentWeapon.WeaponData.MassKG;
+        movementScript.Shootable = canShoot;
+    }
+    
+    private float GetSpreadRotation()
+    {
+        float max = currentWeapon.WeaponSpread.CurrentSpreadAmount;
+        return Random.Range(-max, max);
+    }
+    
+    private Vector3 GetShotgunRotation(Vector3 forward, float angle)
+    {
+        // this makes a uniform cone based on the angle we give and then randomises a location in that as the offset
+        float angleRad = angle * Mathf.Deg2Rad;
+
+        Vector3 random = Random.onUnitSphere;
+        Vector3 axis = Vector3.Cross(forward, random).normalized;
+
+        float theta = Random.Range(0f, angleRad);
+
+        return Quaternion.AngleAxis(theta * Mathf.Rad2Deg, axis) * forward;
     }
     
     private void SpawnTracer(Vector3 start, Vector3 end)
