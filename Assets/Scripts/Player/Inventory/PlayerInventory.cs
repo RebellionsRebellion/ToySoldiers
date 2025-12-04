@@ -20,6 +20,7 @@ public class PlayerInventory : MonoBehaviour
     public int GetNormalAmmoCount() => normalAmmoCount;
     private int specialAmmoCount;
     public int GetSpecialAmmoCount() => specialAmmoCount;
+    public PlayerCamera.CameraType cameraType;
 
 
     private void Awake()

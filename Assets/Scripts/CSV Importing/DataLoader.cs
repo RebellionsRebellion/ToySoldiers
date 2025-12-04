@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
@@ -43,6 +44,8 @@ public class DataLoader
             weaponData.InitialVelocityMS = float.Parse(columns[14]);
             weaponData.MassKG = float.Parse(columns[15]);
             weaponData.Attachments = columns[16].Split(',');    // same as fire modes
+            
+            weaponData.AimCameraType = GetCameraType(columns[17]);
 
             // save as an asset in the project so it can be referenced
             string assetPath = $"Assets/ScriptableObjects/Weapons/{weaponData.ClassName}.asset";
@@ -53,5 +56,13 @@ public class DataLoader
         }
 
         return weapons;
+    }
+    
+    private static PlayerCamera.CameraType GetCameraType(string cameraType)
+    {
+        if (Enum.TryParse<PlayerCamera.CameraType>(cameraType, out var result))
+            return result;
+
+        return PlayerCamera.CameraType.Aim;  // fallback
     }
 }

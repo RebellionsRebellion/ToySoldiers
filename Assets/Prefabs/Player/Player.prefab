@@ -52,7 +52,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0db66286ac96ace43bc9fc3451176862, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputController: {fileID: 0}
   playerAnimator: {fileID: 5173216120211466665}
   thirdPersonTracker: {fileID: 5636812732384450702}
   playerCamera: {fileID: 7862692414108309895}
@@ -357,8 +356,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd5eac21d4edfb048a08db4e1ef2017f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponsSystem
-  playerInputController: {fileID: 0}
   playerCamera: {fileID: 4552367001221092465}
+  playerCameraSystem: {fileID: 7862692414108309895}
   canShoot:
     serializedVersion: 2
     m_Bits: 119

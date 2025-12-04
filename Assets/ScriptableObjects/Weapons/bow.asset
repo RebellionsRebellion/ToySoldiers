@@ -32,3 +32,4 @@ MonoBehaviour:
   Attachments:
   - 
   WeaponPrefab: {fileID: 0}
+  AimCameraType: 1
