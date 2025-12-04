@@ -1,9 +1,10 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerThrowables : MonoBehaviour
 {
-    [SerializeField] private PlayerInputController playerInputController;
+    [FormerlySerializedAs("playerInputController")] [SerializeField] private InputManager playerInputManager;
     [SerializeField] private ThrowableSpawner spawner;
     private ThrowableDataSO currentThrowable;
     
@@ -12,12 +13,12 @@ public class PlayerThrowables : MonoBehaviour
 
     void OnEnable()
     {
-        playerInputController.OnThrowAction += ThrowThing;
+        playerInputManager.OnThrowAction += ThrowThing;
     }
     
     void OnDisable()
     {
-        playerInputController.OnThrowAction -= ThrowThing;
+        playerInputManager.OnThrowAction -= ThrowThing;
     }
 
     private void Start()
