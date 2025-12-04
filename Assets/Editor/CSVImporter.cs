@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class WeaponCSVImporter : MonoBehaviour
+public class CSVImporter : MonoBehaviour
 {
     [MenuItem("Tools/Data Importing/Import Weapons")]
     public static void ImportWeapons()
@@ -28,5 +28,31 @@ public class WeaponCSVImporter : MonoBehaviour
         AssetDatabase.Refresh();
 
         Debug.Log("Weapons updated.");
+    }
+    
+    [MenuItem("Tools/Data Importing/Import Sounds")]
+    public static void ImportSounds()
+    {
+        // find the asset with assetdatabase
+        string[] guids = AssetDatabase.FindAssets("t:SoundTypesSO");
+
+        if (guids.Length == 0)
+        {
+            Debug.LogError("SoundTypes asset not found in project! Please make one before continuing to import");
+            return;
+        }
+
+        string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+        SoundTypesSO so = AssetDatabase.LoadAssetAtPath<SoundTypesSO>(path);
+
+        // load data from the relevant csv
+        so.SoundTypes = DataLoader.LoadSoundsCSV().ToArray();
+
+        // save it to the SO
+        EditorUtility.SetDirty(so);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        Debug.Log("Sounds updated.");
     }
 }

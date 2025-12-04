@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
@@ -53,5 +54,48 @@ public class DataLoader
         }
 
         return weapons;
+    }
+
+    public static List<SoundDataSO> LoadSoundsCSV()
+    {
+        List<SoundDataSO> sounds = new List<SoundDataSO>();
+        List<string[]> rows = CSVParser.LoadFromCSV("sounds");
+
+        if (rows == null || rows.Count <= 1)
+        {
+            Debug.LogError("No sound data found in CSV");
+            return sounds;
+        }
+
+        // skip header row
+        for (int i = 1; i < rows.Count; i++)
+        {
+            string[] columns = rows[i];
+
+            // create a new ScriptableObject instance
+            SoundDataSO soundData = ScriptableObject.CreateInstance<SoundDataSO>();
+
+            // assign values from CSV
+            soundData.WwiseName = columns[0];
+            soundData.Description = columns[2];
+
+            // parse enum safely
+            SoundType parsedType;
+            if (Enum.TryParse<SoundType>(columns[1], true, out parsedType))
+                soundData.Type = parsedType;
+            else
+                soundData.Type = SoundType.WwiseEvent; // fallback default
+
+            soundData.Is2D = false; // default
+
+            // save as an asset
+            string assetPath = $"Assets/ScriptableObjects/Sounds/{soundData.WwiseName}.asset";
+            AssetDatabase.CreateAsset(soundData, assetPath);
+            AssetDatabase.SaveAssets();
+
+            sounds.Add(soundData);
+        }
+
+        return sounds;
     }
 }
