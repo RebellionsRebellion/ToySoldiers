@@ -19,7 +19,8 @@ public class WeaponDataSO : ScriptableObject
 
     [Header("Fire modes")]
     [Tooltip("The weapons fire modes in order of how they will be cycled through. The first one is the default mode")]
-    public string[] FireModes;  // example: ["Full", "Semi"]
+    public FireModes[] SupportedFireModes;
+    public FireModes CurrentFireMode;
 
     [Header("Reloading")]
     public int MagSize;
@@ -60,13 +61,21 @@ public class WeaponDataSO : ScriptableObject
     [Tooltip("Type of aiming used (scope or aim or whatever)")]
     public PlayerCamera.CameraType AimCameraType;
 
+    public enum FireModes
+    {
+        Full,
+        Semi,
+        Single
+    }
+
     public void CopyFrom(WeaponDataSO other)
     {
         ClassName = other.ClassName;
         DisplayName = other.DisplayName;
         FireRateRPM = other.FireRateRPM;
         Damage = other.Damage;
-        FireModes = other.FireModes;
+        SupportedFireModes = other.SupportedFireModes;
+        CurrentFireMode = other.CurrentFireMode;
         MagSize = other.MagSize;
         SpecialAmmo = other.SpecialAmmo;
         ReloadTime = other.ReloadTime;
