@@ -25,20 +25,6 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
---- !u!114 &-8661564884809490283
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df8d250b0a0b68c4f90b2dd24f32f3ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoundAnimationEvent
-  triggerTime: 0.606
-  soundData: {fileID: 11400000, guid: b0f831c5daa702047affa102abff83c5, type: 2}
 --- !u!1102 &-8275096922502126323
 AnimatorState:
   serializedVersion: 6
@@ -163,20 +149,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnimationEventStateBehaviour
   triggerTime: 0
   eventName: 
---- !u!114 &-6169527581276767775
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df8d250b0a0b68c4f90b2dd24f32f3ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoundAnimationEvent
-  triggerTime: 0.39
-  soundData: {fileID: 11400000, guid: b0f831c5daa702047affa102abff83c5, type: 2}
 --- !u!1102 &-5932668968410889926
 AnimatorState:
   serializedVersion: 6
@@ -471,6 +443,20 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &-171191122377949067
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df8d250b0a0b68c4f90b2dd24f32f3ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundAnimationEvent
+  triggerTime: 0.339
+  soundData: {fileID: 11400000, guid: b0f831c5daa702047affa102abff83c5, type: 2}
 --- !u!91 &9100000
 AnimatorController:
   m_ObjectHideFlags: 0
@@ -974,8 +960,7 @@ AnimatorState:
   m_Transitions:
   - {fileID: 7733814391196328600}
   m_StateMachineBehaviours:
-  - {fileID: -6169527581276767775}
-  - {fileID: -8661564884809490283}
+  - {fileID: -171191122377949067}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1

@@ -6,22 +6,21 @@
   "SoundBankVersion": "154",
   "SoundBanks": [
    {
-    "Id": "2260221316",
-    "Type": "Event",
-    "GUID": "{5C9BB3F5-C107-4E6B-B55B-F6A1752BD31B}",
+    "Id": "3161908922",
+    "Type": "User",
+    "GUID": "{63F8E281-6C68-4EC7-B33A-D4B9071621A5}",
     "Language": "SFX",
-    "Hash": "{017D1ECF-F232-EB4F-A8D6-403F8CFBA4C8}",
-    "ObjectPath": "PlayTestSound",
-    "ShortName": "PlayTestSound",
-    "Path": "Event/PlayTestSound.bnk",
+    "Hash": "{A71BE0A5-726D-81B9-2390-B840015F4506}",
+    "ObjectPath": "\\SoundBanks\\Default Work Unit\\Main",
+    "ShortName": "Main",
+    "Path": "Main.bnk",
     "Media": [
      {
       "Id": "367565313",
       "Language": "SFX",
       "Streaming": "false",
-      "Location": "Loose",
+      "Location": "Memory",
       "ShortName": "gun-glock-dry-fire.wav",
-      "Path": "Media/367565313.wem",
       "CachePath": "06/{065F0D5F-CA3B-61C4-0BCC-8C360FCD3F26}.wem"
      }
     ],
@@ -43,6 +42,6 @@
     ]
    }
   ],
-  "FileHash": "{F614590C-4BF4-E688-2254-204941AEC2E4}"
+  "FileHash": "{9381DAD8-5803-3B40-C7CD-D39C485DA8A7}"
  }
 }

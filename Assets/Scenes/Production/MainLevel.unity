@@ -438,6 +438,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae66b20a1ce52d74cad0b4dc370be5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &123645792 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8879317118837861001, guid: 16d013a5ea6882043bf5a596313d95a9, type: 3}
+  m_PrefabInstance: {fileID: 1951652783}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &123645795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 123645792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afb1893b0d9ac38448b4a4e74ea1a628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AK.Wwise.Unity.MonoBehaviour::AkBank
+  triggerList: f7e1664c
+  useOtherObject: 0
+  data:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: e23b06d9858ea0b40af093810c6952ef, type: 2}
+  decodeBank: 0
+  overrideLoadSetting: 0
+  loadAsynchronous: 0
+  saveDecodedBank: 0
+  unloadTriggerList: 958ca0ea
+  bankNameInternal: 
+  valueGuidInternal: 
 --- !u!224 &190631013 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7184188667229168884, guid: 31c42cdabf755054eb9c709820f21265, type: 3}
@@ -3005,6 +3035,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.00000024575402
       objectReference: {fileID: 0}
+    - target: {fileID: 7492729879512954523, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
+      propertyPath: triggerList.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7692340351643701208, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.000000026077036
@@ -3308,8 +3342,55 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 479309541129405295, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 994221340}
+    - targetCorrespondingSourceObject: {fileID: 479309541129405295, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 994221339}
   m_SourcePrefab: {fileID: 100100000, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
+--- !u!1 &994221330 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 479309541129405295, guid: b2728e5a516b01b439e02a2c37965a65, type: 3}
+  m_PrefabInstance: {fileID: 994221329}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &994221339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994221330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183b1fb4ae87e1845a91f263eec0b3b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AK.Wwise.Unity.MonoBehaviour::AkGameObj
+  m_listeners:
+    initialListenerList: []
+    useDefaultListeners: 1
+  isEnvironmentAware: 0
+  isStaticObject: 0
+  usePositionOffsetData: 0
+  m_positionOffsetData:
+    KeepMe: 0
+    positionOffset: {x: 0, y: 0, z: 0}
+  scalingFactor: 1
+  m_posOffsetData: {fileID: 0}
+  listenerMask: 1
+--- !u!114 &994221340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994221330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3548e66ca731485da398856e1bc1a9f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundSystem.WwisePlayer
 --- !u!4 &1019839482 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 544508514229558239, guid: d941f8c25071b75408f4976baeb63121, type: 3}
@@ -4795,7 +4876,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8879317118837861001, guid: 16d013a5ea6882043bf5a596313d95a9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 123645795}
   m_SourcePrefab: {fileID: 100100000, guid: 16d013a5ea6882043bf5a596313d95a9, type: 3}
 --- !u!1 &1951848855
 GameObject:
