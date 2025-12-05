@@ -59,7 +59,7 @@ public class AIVision : MonoBehaviour
         {
             if (!hasAlertedSquad)
             { 
-                aiStateMachine = GetComponent<AIStateMachine>();
+                aiStateMachine = GetComponentInParent<AIStateMachine>();
                 aiStateMachine.AlertSquad(player);
                 hasAlertedSquad = true;
             }
