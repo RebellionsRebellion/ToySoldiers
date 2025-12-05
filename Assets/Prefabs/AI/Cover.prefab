@@ -173,6 +173,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5859232752732698092, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
+      propertyPath: standingCover
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9213380628373028597, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
       propertyPath: m_Name
       value: CoverPoint (1)
@@ -241,6 +245,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5599162044706293442, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5859232752732698092, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
+      propertyPath: standingCover
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9213380628373028597, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
@@ -313,6 +321,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5859232752732698092, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
+      propertyPath: standingCover
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9213380628373028597, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
       propertyPath: m_Name
       value: CoverPoint
@@ -381,6 +393,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5599162044706293442, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5859232752732698092, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
+      propertyPath: standingCover
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9213380628373028597, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
@@ -453,6 +469,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5859232752732698092, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
+      propertyPath: standingCover
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9213380628373028597, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
       propertyPath: m_Name
       value: CoverPoint (2)
@@ -521,6 +541,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5599162044706293442, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5859232752732698092, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
+      propertyPath: standingCover
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9213380628373028597, guid: a8473ddd1b662e348968a7eb691e33d7, type: 3}
