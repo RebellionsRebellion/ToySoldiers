@@ -43,7 +43,7 @@ public class WeaponsSystem : MonoBehaviour
     private void OnEnable()
     {
 //        playerInputController.OnShootAction += Fire;
-        InputManager.Instance.OnReloadAction += Reload;
+        // InputManager.Instance.OnReloadAction += Reload;
     }
 
     private void OnDisable()
@@ -54,6 +54,7 @@ public class WeaponsSystem : MonoBehaviour
 
     private void Start()
     {
+        InputManager.Instance.OnReloadAction += Reload;
         // Find crosshair in scene
         crosshair = FindFirstObjectByType<Crosshair>();
         currentWeapon = playerInventory.GetPrimaryWeapon();

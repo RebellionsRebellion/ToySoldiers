@@ -93,7 +93,7 @@ public class AIStateMachine : MonoBehaviour
         if (commander != null)
         {
             CommanderController followerCommander = commander.GetComponent<CommanderController>();
-            if (commander != null)
+            if (followerCommander != null)
             {
                 followerCommander.Followers.Remove(this);
             }
