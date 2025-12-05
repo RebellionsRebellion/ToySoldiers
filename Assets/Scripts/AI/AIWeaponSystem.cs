@@ -108,6 +108,16 @@ public class AIWeaponSystem : MonoBehaviour
         // Direction to target center
         Vector3 direction = ((target.position + Vector3.up) - firePoint.position).normalized;
 
+        if (!isMultiShot)
+        {
+            Quaternion spreadRot = Quaternion.Euler(
+                GetSpreadRotation(),
+                GetSpreadRotation(),
+                GetSpreadRotation()
+            );
+            direction = spreadRot * direction;
+        }
+
         // debug lines
         Debug.DrawRay(firePoint.position, direction * 100f, Color.red, 10f);
 

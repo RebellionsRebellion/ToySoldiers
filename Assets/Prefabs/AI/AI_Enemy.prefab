@@ -101,6 +101,84 @@ MonoBehaviour:
   startingSecondaryWeapon: {fileID: 11400000, guid: 5f1ff124cdeaffa4e902aa0b95fd7d95, type: 2}
   maxNormalAmmo: 12345
   maxSpecialAmmo: 12345
+--- !u!1 &4646059732425446610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5641210126858707400}
+  - component: {fileID: 6728706342447770063}
+  - component: {fileID: 6562031176854252787}
+  m_Layer: 0
+  m_Name: Vision
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5641210126858707400
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4646059732425446610}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 544508514229558239}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &6728706342447770063
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4646059732425446610}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6562031176854252787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4646059732425446610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce69e67d439c7694cb73d54c05b752df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AIVision
+  Range: 20
+  FOV: 120
+  canSeePlayer: 0
+  player: {fileID: 0}
+  visionMask:
+    serializedVersion: 2
+    m_Bits: 247
+  aggressionTime: 1
+  lastSeenPosition: {x: 0, y: 0, z: 0}
+  lastSeenTime: 0
+  searchTimeout: 20
+  detectionDrop: 10
 --- !u!1 &7081199409497347268
 GameObject:
   m_ObjectHideFlags: 0
@@ -112,10 +190,8 @@ GameObject:
   - component: {fileID: 544508514229558239}
   - component: {fileID: 2202884483109743974}
   - component: {fileID: 7845023440399694822}
-  - component: {fileID: 1441648040804130426}
   - component: {fileID: 6338152666241435799}
   - component: {fileID: 4685365860919227001}
-  - component: {fileID: 6292057945591227813}
   - component: {fileID: 3479961306864216117}
   m_Layer: 8
   m_Name: AI_Enemy
@@ -139,6 +215,7 @@ Transform:
   m_Children:
   - {fileID: 1251724712224603352}
   - {fileID: 1761445734072530711}
+  - {fileID: 5641210126858707400}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &2202884483109743974
@@ -186,27 +263,6 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!135 &1441648040804130426
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7081199409497347268}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 4
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6338152666241435799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,30 +299,6 @@ MonoBehaviour:
   healthRegenDelay: 8
   maxHealthRegenerated: 50
   aiAnimator: {fileID: 3479961306864216117}
---- !u!114 &6292057945591227813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7081199409497347268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce69e67d439c7694cb73d54c05b752df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AIVision
-  Range: 20
-  FOV: 120
-  canSeePlayer: 0
-  player: {fileID: 0}
-  visionMask:
-    serializedVersion: 2
-    m_Bits: 247
-  aggressionTime: 1
-  lastSeenPosition: {x: 0, y: 0, z: 0}
-  lastSeenTime: 0
-  searchTimeout: 20
-  detectionDrop: 10
 --- !u!95 &3479961306864216117
 Animator:
   serializedVersion: 7
