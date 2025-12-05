@@ -67,8 +67,6 @@ public class InputManager : MonoBehaviour
         JumpDown = false;
         CrouchDown = false;
     }
-
-
     private void OnMove(InputValue inputValue)
     {
         FrameMove = inputValue.Get<Vector2>();

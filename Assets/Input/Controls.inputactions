@@ -243,7 +243,7 @@
                 {
                     "name": "Throw",
                     "type": "Button",
-                    "id": "f4f421b5-5b4f-40a1-82e5-76782d97c0c1",
+                    "id": "e6ac6394-fd09-4bcf-a701-ae1012d17016",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -319,22 +319,11 @@
                 },
                 {
                     "name": "",
-                    "id": "c420f9d0-c5ac-4e47-b854-7b8eb93c05ca",
+                    "id": "ac152194-e9e6-400d-8482-f3963f30ba0b",
                     "path": "<Keyboard>/g",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard+Mouse",
-                    "action": "Throw",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d5ce14de-c548-46b8-a24e-6cc768594a53",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Throw",
                     "isComposite": false,
                     "isPartOfComposite": false

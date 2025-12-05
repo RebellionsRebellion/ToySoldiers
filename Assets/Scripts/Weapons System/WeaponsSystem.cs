@@ -43,7 +43,7 @@ public class WeaponsSystem : MonoBehaviour
     private void OnEnable()
     {
 //        playerInputController.OnShootAction += Fire;
-        InputManager.Instance.OnReloadAction += Reload;
+        // InputManager.Instance.OnReloadAction += Reload;
     }
 
     private void OnDisable()
@@ -54,6 +54,7 @@ public class WeaponsSystem : MonoBehaviour
 
     private void Start()
     {
+        InputManager.Instance.OnReloadAction += Reload;
         // Find crosshair in scene
         crosshair = FindFirstObjectByType<Crosshair>();
         currentWeapon = playerInventory.GetPrimaryWeapon();
@@ -92,14 +93,14 @@ public class WeaponsSystem : MonoBehaviour
         if(Time.time - lastReloadTime < currentWeapon.WeaponData.ReloadTime)
         {
             // am still reloading
-            Debug.Log("Still reloading!");
+            // Debug.Log("Still reloading!");
             return;
         }
 
         if(currentWeapon.CurrentAmmoInMag <= 0)
         {
             // play empty mag sound here
-            Debug.Log("No ammo in mag!");
+            // Debug.Log("No ammo in mag!");
             return;
         }
 
@@ -111,7 +112,7 @@ public class WeaponsSystem : MonoBehaviour
             return;
         }
 
-        Debug.Log("Firing weapon: " + currentWeapon.WeaponData.DisplayName);
+        // Debug.Log("Firing weapon: " + currentWeapon.WeaponData.DisplayName);
         
         // shoot it
         if (currentWeapon.WeaponData.ShotQuantity > 1)
@@ -205,7 +206,7 @@ public class WeaponsSystem : MonoBehaviour
             // apply damage if we hit an enemy
             if (hit.collider.CompareTag("Enemy"))
             {
-                hit.collider.GetComponent<AIController>().TakeDamage(999f);
+                hit.collider.GetComponent<AIController>().TakeDamage(currentWeapon.WeaponData.Damage);
                 crosshair.Hitmarker();
             }
         }
@@ -221,14 +222,20 @@ public class WeaponsSystem : MonoBehaviour
         Vector3 shootDir;
 
         // multi shot support
-        if (isMultiShot)
+        if (!isMultiShot)
         {
-            Debug.Log("Multi shot rotation");
-            shootDir = GetShotgunRotation(camForward, multiRotation);
+            Quaternion spreadRot = Quaternion.Euler(
+                GetSpreadRotation(),
+                GetSpreadRotation(),
+                GetSpreadRotation()
+            );
+
+            shootDir = spreadRot * camForward;
         }
         else
         {
-            shootDir = camForward;
+            Debug.Log("Multi shot rotation");
+            shootDir = GetShotgunRotation(camForward, multiRotation);
         }
         
         // instantiate and setup the physics projectile
