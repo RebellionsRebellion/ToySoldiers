@@ -25,7 +25,8 @@ public class AIStateMachine : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        vision = GetComponent<AIVision>();
+        vision = GetComponentInChildren<AIVision>();
+        Debug.Log(vision);
         aiController = GetComponent<AIController>();
         ReturnToStartingState();
     }
