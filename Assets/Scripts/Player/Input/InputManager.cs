@@ -130,6 +130,8 @@ public class InputManager : MonoBehaviour
     {
         IsThrowing = inputValue.isPressed;
         
+        Debug.Log(inputValue.isPressed);
+        
         if(IsThrowing && OnThrowAction != null)
             OnThrowAction.Invoke();
     }
