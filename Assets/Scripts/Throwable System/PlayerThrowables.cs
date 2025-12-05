@@ -28,7 +28,6 @@ public class PlayerThrowables : MonoBehaviour
 
     void ThrowThing()
     {
-        Debug.Log("Throwing " + currentThrowable.name);
         if (playerInventory.GetThrowableCount() > 0)
         {
             spawner.ThrowObject(currentThrowable);

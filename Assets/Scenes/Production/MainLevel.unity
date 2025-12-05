@@ -767,7 +767,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6473023366251467684, guid: 93a54862a440dc14ba805ac2999dbaca, type: 3}
       propertyPath: m_DefaultActionMap
-      value: Movement
+      value: bd049e4a-488e-4919-aee9-47872c2790fd
       objectReference: {fileID: 0}
     - target: {fileID: 7905670851690623010, guid: 93a54862a440dc14ba805ac2999dbaca, type: 3}
       propertyPath: m_LocalPosition.x

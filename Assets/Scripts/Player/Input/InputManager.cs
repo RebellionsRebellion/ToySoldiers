@@ -67,8 +67,6 @@ public class InputManager : MonoBehaviour
         JumpDown = false;
         CrouchDown = false;
     }
-
-
     private void OnMove(InputValue inputValue)
     {
         FrameMove = inputValue.Get<Vector2>();
@@ -129,8 +127,6 @@ public class InputManager : MonoBehaviour
     private void OnThrow(InputValue inputValue)
     {
         IsThrowing = inputValue.isPressed;
-        
-        Debug.Log(inputValue.isPressed);
         
         if(IsThrowing && OnThrowAction != null)
             OnThrowAction.Invoke();
